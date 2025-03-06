@@ -1,0 +1,181 @@
+.fixed_top {
+  top: 0;
+  width: 100%;
+  z-index: 9999 !important;
+  position: fixed;
+}
+.fixed_top header {
+  background: #fff;
+  box-shadow: 0 0 15px 4px #d8e6fb;
+}
+.fixed_top header .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1220px;
+  margin: 0 auto;
+}
+/* logo */
+.fixed_top header .logo {
+  width: 90px;
+}
+.fixed_top header .logo .logoMobile {
+  display: none;
+}
+/* form search */
+.fixed_top header .FormSearch {
+  width: 300px;
+  display: block;
+  align-items: center;
+  position: relative;
+}
+.fixed_top header .FormSearch .searchInput {
+  width: 100%;
+  margin: 0;
+}
+.fixed_top header .FormSearch .searchInput input {
+  border-radius: 20px;
+  width: 100%;
+  height: 40px;
+  color: #606060;
+  font-size: 15px;
+  border: none;
+  box-shadow: 0 0 15px rgba(63 143 186 / 55%);
+  padding-right: 40px;
+}
+.fixed_top header .FormSearch .searchInput input:focus {
+  border-color: #337ab7;
+}
+.fixed_top header .FormSearch .button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  display: inline;
+  margin: 0;
+}
+.fixed_top header .FormSearch .button button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 50%;
+}
+.fixed_top header .FormSearch .button button:hover {
+  background: none !important;
+  border: none !important;
+  color: #337ab7;
+}
+/* navbar */
+.fixed_top header .menu__mobile {
+  display: none;
+}
+.fixed_top header nav {
+  display: block;
+}
+.fixed_top header nav ul {
+  display: flex;
+  justify-content: space-between;
+}
+.fixed_top header nav ul li a {
+  font-weight: bold;
+  font-size: 17px;
+  color: #606060;
+  margin: 0 15px;
+  line-height: 19px;
+}
+.fixed_top header nav ul li a:hover {
+  color: #337ab7;
+}
+/* cart */
+.fixed_top header .cart,
+.fixed_top header .account {
+  width: 80px;
+  padding: 15px;
+}
+.fixed_top header .cart a svg,
+.fixed_top header .account svg {
+  color: #606060;
+  width: 40px;
+  cursor: pointer;
+}
+.fixed_top header .cart a svg:hover,
+.fixed_top header .account svg:hover {
+  color: #337ab7;
+}
+
+/* Reposive */
+/* max-width: 320px (điện thoại di động, hiển thị chiều dọc) */
+@media (max-width: 320px) {
+}
+/* max-width: 480px (điện thoại di động) */
+@media (max-width: 480px) {
+  .fixed_top header {
+    padding: 5px 0;
+    background: #fff;
+  }
+  .fixed_top header .menu__mobile {
+    display: block;
+    position: fixed;
+    width: 100%;
+    background: #fff;
+    bottom: 0;
+    z-index: 9999999;
+    color: #606060;
+    color: #444;
+    font-weight: 500;
+  }
+  .fixed_top header .menu__mobile ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
+    box-shadow: 0 0 5px #888;
+  }
+  .fixed_top header .menu__mobile ul li a svg {
+    margin: 0 auto;
+  }
+  .fixed_top header .cart a svg,
+  .fixed_top header .account svg {
+    width: 30px;
+  }
+
+  .fixed_top header .FormSearch {
+    width: 200px;
+    margin-right: 10px;
+  }
+  .fixed_top header .FormSearch .searchInput input {
+    border-radius: 15px;
+    box-shadow: 0 0 5px rgba(63 143 186 / 55%);
+  }
+}
+/* max-width: 600px (máy tính bảng, hiển thị chiều dọc)*/
+@media (max-width: 600px) {
+}
+/* max-width: 800px (máy tính bảng, hiển thị chiều ngang) */
+@media (max-width: 800px) {
+}
+/* max-width: 768px (máy tính bảng loại to, hiển thị chiều dọc)*/
+@media (max-width: 768px) {
+}
+/* max-width: 1024px (máy tính bảng loại to, hiển thị chiều ngang) */
+@media (max-width: 1024px) {
+  .fixed_top header .logo {
+    width: 80px;
+  }
+  .fixed_top header .logo .logoMobile {
+    display: block;
+  }
+  .fixed_top header .logo .logoDesk,
+  .fixed_top header nav {
+    display: none;
+  }
+  .fixed_top header .header {
+    width: 100%;
+  }
+  .fixed_top header .header {
+    gap: 10px;
+  }
+}
+/* min-width: 1025px (từ size này trở lên là danh cho desktop thông thường).*/
+@media (min-width: 1025px) {
+}
