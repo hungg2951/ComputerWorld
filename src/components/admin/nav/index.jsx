@@ -25,6 +25,12 @@ const NavbarAdmin = [
           label: "Kiểu Laptop",
           path: "/admin/laptop-type",
         },
+        {
+          key: "4",
+          icon: <TabletTwoTone />,
+          label: "Hãng",
+          path: "/admin/brand",
+        },
       
 ]
 export default NavbarAdmin;

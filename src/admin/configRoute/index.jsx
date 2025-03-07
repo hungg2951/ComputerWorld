@@ -1,4 +1,5 @@
 import LayoutAdmin from "../layout";
+import BrandPage from "../pages/brand";
 import Dashboard from "../pages/dashboard";
 import LaptopType from "../pages/laptopType";
 import ListUsers from "../pages/users";
@@ -27,6 +28,10 @@ const RoutePrivate = [
           {
             path: "laptop-type",
             element: <LaptopType />,
+          },
+          {
+            path: "brand",
+            element: <BrandPage />,
           },
         ],
       },
