@@ -3,6 +3,7 @@ import { Form, Input, Button, message, Select } from "antd";
 import { useDispatch } from "react-redux";
 import { createBrand } from "../../../redux/slice/brandSlice";
 import { getAllData } from "../../../redux/slice/laptopTypeSlice";
+import { FileAddOutlined } from "@ant-design/icons";
 const Create = ({ onSubmit }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -64,7 +65,7 @@ const Create = ({ onSubmit }) => {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Thêm danh mục
+          <FileAddOutlined /> Tạo mới
           </Button>
         </Form.Item>
       </Form>

@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { createLaptopType } from "../../../redux/slice/laptopTypeSlice";
+import { FileAddOutlined } from "@ant-design/icons";
 const Create = ({onSubmit}) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const Create = ({onSubmit}) => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Thêm danh mục
+          <FileAddOutlined /> Tạo mới
           </Button>
         </Form.Item>
       </Form>

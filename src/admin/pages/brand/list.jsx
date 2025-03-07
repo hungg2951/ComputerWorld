@@ -21,7 +21,7 @@ const List = ({ change }) => {
   const closeModel = () => {
     setModelEdit(false);
   };
-  const openModel = (id) => {
+  const openModel = () => {
     setModelEdit(true);
   };
   useEffect(() => {

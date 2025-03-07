@@ -59,7 +59,7 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
             Hủy
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
-            Xác nhận
+            Cập nhật
           </Button>,
         ]}
       >

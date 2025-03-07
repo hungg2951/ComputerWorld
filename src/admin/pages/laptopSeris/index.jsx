@@ -1,9 +1,16 @@
 import React from 'react';
-
+import { useState } from "react";
+import Create from "./create";
+import List from "./list";
 const LaptopSerisPage = () => {
+    const [change, setChange] = useState(false);
+  const onSubmit = () => {
+    setChange(!change);
+  };
   return (
     <div>
-      
+      <Create onSubmit={onSubmit} />
+      <List change={change} />
     </div>
   );
 }
