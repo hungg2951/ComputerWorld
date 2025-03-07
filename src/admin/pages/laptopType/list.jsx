@@ -1,18 +1,41 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Select, Space, Table } from "antd";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { useDispatch } from "react-redux";
-import { userGetAll, userUpdate } from "../../../redux/slice/userSlice";
-import { hiddenLoading, showLoading } from "../../../redux/slice/loadingSlice";
-import { toast } from "react-toastify";
+import { getAllData } from "../../../redux/slice/laptopTypeSlice";
+import Update from "./update";
 
-const ListUsers = () => {
+const List = ({ change }) => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const dispatch = useDispatch();
-  const [users, setUsers] = useState();
+  const [dataSource, setdataSource] = useState();
+  const [modelEdit, setModelEdit] = useState(false);
+  const [changeEdit, setchangeEdit] = useState(false);
+  const [detailData, setDetailData] = useState();
   const searchInput = useRef(null);
+  const dispatch = useDispatch();
+  const onChangeEdit = ()=>{
+    setchangeEdit(!changeEdit)
+  }
+  const closeModel = () => {
+    setModelEdit(false);
+  };
+  const openModel = (id) => {
+    setModelEdit(true);
+  };
+  useEffect(() => {
+    dispatch(getAllData())
+      .unwrap()
+      .then((res) => {
+        setdataSource(res);
+      })
+      .catch((e) => {
+        {
+          console.log(e);
+        }
+      });
+  }, [change,changeEdit]);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -22,7 +45,6 @@ const ListUsers = () => {
     clearFilters();
     setSearchText("");
   };
-
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -127,85 +149,40 @@ const ListUsers = () => {
         text
       ),
   });
-  const { Option } = Select;
-
-  const handleChange = (value,option) => {
-    // return console.log(value,option.extra);
-    
-    dispatch(userUpdate({status:value,id:option.extra})).unwrap()
-    .then(()=>{
-      toast.success("Thành công")
-    })
-    .catch((e)=>{
-      console.log(e);
-    })
-  };
-  useEffect(() => {
-    dispatch(showLoading());
-    dispatch(userGetAll())
-      .then((res) => {
-        setUsers(res.payload);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => dispatch(hiddenLoading()));
-  }, []);
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "30%",
+      width: "90%",
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
-      width: "20%",
-      ...getColumnSearchProps("age"),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      ...getColumnSearchProps("email"),
-      sorter: (a, b) => a.email.length - b.email.length,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "vai trò",
-      dataIndex: "role",
-      key: "role",
-      ...getColumnSearchProps("role"),
-      sorter: (a, b) => a.role.length - b.role.length,
-      sortDirections: ["descend", "ascend"],
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      ...getColumnSearchProps("status"),
-      sorter: (a, b) => a.status.length - b.status.length,
-      render: (item, record, index) => {
-        return (
-          <div>
-            <Select
-              defaultValue={item}
-              style={{ width: 150 }}
-              onChange={(value,option)=>handleChange(value,option)}
-            >
-              <Option value={true} extra = {record._id}>Đang hoạt động</Option>
-              <Option value={false} extra = {record._id}>Vô hiệu hóa</Option>
-            </Select>
-          </div>
-        );
-      },
+      title: "Hành động",
+      key: "name",
+      width: "20px",
+      render: (item, record, index) => (
+        <div onClick={() => openModel()}>
+          <EditOutlined className="cursor-pointer" />
+        </div>
+      ),
     },
   ];
-
-  return <Table columns={columns} dataSource={users} />;
+  return (
+    <>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={{ pageSize: 5 }}
+        onRow={(record) => ({
+          onClick: () => {
+            setDetailData(record);
+          },
+        })}
+      />
+      <Update onChangeEdit = {onChangeEdit} open={modelEdit} close={closeModel} detailData={detailData} />
+    </>
+  );
 };
 
-export default ListUsers;
+export default List;

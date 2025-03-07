@@ -12,11 +12,14 @@ export const checkToken = () => {
       const decoded = jwtDecode(token);
       const currentTime = Date.now() / 1000; // Đơn vị giây
       if (decoded.exp && decoded.exp < currentTime) {
-        console.log("Token đã hết hạn!");
+        localStorage.removeItem("token");
+        window.location.href = "/";
         return false;
       }
       return true;
     } catch (error) {
+      localStorage.removeItem("token");
+      window.location.href = "/";
       console.log("Token không hợp lệ!", error);
       return false;
     }

@@ -5,7 +5,11 @@ export const laptopTypeAPI = {
         return instance.get("laptops-type")
     },
     getById(id){
-        return instance.get("laptop-type",id)
+        return instance.get(`laptop-type`, {
+            params: {
+                id
+            }
+        })
     },
     create(data){
         return instance.post("laptop-type",data)

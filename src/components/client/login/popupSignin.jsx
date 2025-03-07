@@ -20,8 +20,8 @@ const PopupSignin = ({ visible, onClose, onRegister }) => {
         toast.success("Đăng nhập thành công");
       })
       .catch((error) => {
-        setMessage("Tài khoản hoặc mật khẩu không chính xác !");
-        console.log("Lỗi trả về:", error);
+        setMessage(error.message);
+        console.log("Lỗi trả về:", error.message);
       });
   };
   return (

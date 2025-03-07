@@ -1,7 +1,7 @@
 import {
-  UploadOutlined,
+  HomeFilled,
+    TabletTwoTone,
   UserOutlined,
-  VideoCameraOutlined,
 } from "@ant-design/icons";
 import React from "react";
 
@@ -9,20 +9,22 @@ import React from "react";
 const NavbarAdmin = [
         {
           key: "1",
-          icon: <UserOutlined/>,
+          icon: <HomeFilled/>,
           label: "DashBoard",
           path: "/admin",
         },
         {
           key: "2",
-          icon: <VideoCameraOutlined />,
+          icon: <UserOutlined/>,
           label: "Danh sách tài khoản",
           path: "/admin/users",
         },
         {
           key: "3",
-          icon: <UploadOutlined />,
-          label: "nav 3",
+          icon: <TabletTwoTone />,
+          label: "Kiểu Laptop",
+          path: "/admin/laptop-type",
         },
+      
 ]
 export default NavbarAdmin;
