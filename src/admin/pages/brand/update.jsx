@@ -10,7 +10,7 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
   const [dataLaptopType, setDataLaptopType] = useState();
   useEffect(() => {
     if (detailData) {
-      form.setFieldsValue({ ...detailData });
+      form.setFieldsValue({ ...detailData,laptop_type_id: detailData.laptop_type_id._id });
     }
   }, [detailData]);
   useEffect(() => {
@@ -71,15 +71,23 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
           >
             <Input placeholder="Nhập tên danh mục" />
           </Form.Item>
-          {dataLaptopType && dataLaptopType.length !== 0 ? (
-            <Select placeholder="Chọn kiểu laptop" className="w-full" defaultValue={detailData?detailData.laptop_type_id._id:""}>
-              {dataLaptopType.map((item) => (
-                <Option key={item._id} value={item._id}>
-                  {item.name}
-                </Option>
-              ))}
-            </Select>
-          ) : null}
+          <Form.Item
+            name="laptop_type_id"
+            rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
+          >
+            {dataLaptopType && dataLaptopType.length !== 0 ? (
+              <Select
+                placeholder="Chọn kiểu laptop"
+                className="w-full"
+              >
+                {dataLaptopType.map((item) => (
+                  <Option key={item._id} value={item._id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            ) : null}
+          </Form.Item>
         </Form>
       </Modal>
     </div>
