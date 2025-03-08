@@ -6,6 +6,8 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useDispatch } from "react-redux";
 import { getAllProduct } from "../../../redux/slice/productSlice";
+import { EditOutlined, PlusCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import ModelCreateProductDetails from "./modelCreateProductDetails";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 const { Search } = Input;
@@ -15,6 +17,7 @@ const ProductAdminPage = () => {
   const [dataFilter, setDataFilter] = useState(dataSource);
   const [searchText, setSearchText] = useState("");
   const [dateRange, setDateRange] = useState([]);
+  const [isModalCreateProductDetailVisible, setIsModalCreateProductDetailVisible] = useState(false);
   const navigation = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -28,7 +31,6 @@ const ProductAdminPage = () => {
               date: dayjs(item.createdAt).format("YYYY-MM-DD"),
             }))
           );
-          
         }
       })
       .catch((e) => {
@@ -65,7 +67,7 @@ const ProductAdminPage = () => {
     if (dateValues?.length === 2) {
       const [start, end] = dateValues;
       filteredData = filteredData.filter((item) => {
-        const itemDate = dayjs(item.date).startOf("day")
+        const itemDate = dayjs(item.date).startOf("day");
         return (
           dayjs(itemDate).isSameOrAfter(start.format("YYYY-MM-DD")) &&
           dayjs(itemDate).isSameOrBefore(end.format("YYYY-MM-DD"))
@@ -100,6 +102,30 @@ const ProductAdminPage = () => {
       key: "date",
       render: (text) => dayjs(text).format("DD/MM/YYYY"),
     },
+    {
+      title: "",
+      render: (item, record, index) => (
+        <div className="flex justify-end">
+          <Button onClick={() => setIsModalCreateProductDetailVisible(true)}><PlusCircleOutlined /> Thêm cấu hình</Button>
+        </div>
+      ),
+    },
+    {
+      title: "",
+      render: (item, record, index) => (
+        <div className="flex justify-end">
+          <Button><QuestionCircleOutlined/> Chi tiết</Button>
+        </div>
+      ),
+    },
+    {
+      title: "",
+      render: (item, record, index) => (
+        <div className="">
+          <Button><EditOutlined /></Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -114,8 +140,18 @@ const ProductAdminPage = () => {
             style={{ width: 200 }}
           />
           <RangePicker onChange={handleDateFilter} />
+          <Button
+            onClick={() => navigation("/admin/products/create")}
+            type="primary"
+          >
+            <PlusCircleOutlined />
+            Thêm sản phẩm mới
+          </Button>
         </Space>
-
+        <ModelCreateProductDetails
+          visible={isModalCreateProductDetailVisible}
+          onClose={() => setIsModalCreateProductDetailVisible(false)}
+        />
         {/* Bảng hiển thị sản phẩm */}
         <Table dataSource={dataFilter} columns={columns} />
       </div>
