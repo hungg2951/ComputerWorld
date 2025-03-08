@@ -37,6 +37,12 @@ const NavbarAdmin = [
           label: "Dòng laptop",
           path: "/admin/laptop-seris",
         },
+        {
+          key: "6",
+          icon: <TabletTwoTone />,
+          label: "Sản phẩm",
+          path: "/admin/products",
+        },
       
 ]
 export default NavbarAdmin;

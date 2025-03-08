@@ -3,6 +3,8 @@ import BrandPage from "../pages/brand";
 import Dashboard from "../pages/dashboard";
 import LaptopSerisPage from "../pages/laptopSeris";
 import LaptopType from "../pages/laptopType";
+import ProductAdminPage from "../pages/products";
+import CreateProductPage from "../pages/products/create";
 import ListUsers from "../pages/users";
 import ProtectedRoute from "../ProtectedRoute";
 
@@ -37,6 +39,14 @@ const RoutePrivate = [
           {
             path: "laptop-seris",
             element: <LaptopSerisPage />,
+          },
+          {
+            path: "products",
+            element: <ProductAdminPage />,
+          },
+          {
+            path: "products/create",
+            element: <CreateProductPage />,
           },
         ],
       },
