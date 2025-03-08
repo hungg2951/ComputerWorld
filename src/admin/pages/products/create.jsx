@@ -1,25 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import { Form, Input, Select, Button, Upload, message, Space } from "antd";
-import UploadPage from "./upload";
+import { Form, Input, Select, Button, message } from "antd";
+import UploadPage from "../../../components/admin/uploads/upload";
 import { useDispatch } from "react-redux";
 import { laptopSerisGetAll } from "../../../redux/slice/laptopSerisSlice";
 import { createProduct } from "../../../redux/slice/productSlice";
 import { toast } from "react-toastify";
-import {
-  DeleteOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { productDetailAttributes } from "../../../ultis/dataTableProductDetails";
 import { createProductDetail } from "../../../redux/slice/productDetailSlice";
+import FormProductDetails from "../../../components/admin/products/formProductDetails";
 
 const { Option } = Select;
 const CreateProductPage = () => {
   const [form] = Form.useForm();
   const uploadRef = useRef(null);
-  const [loading, setLoading] = useState(false);
-  const maxFiles = 1;
+  const [loading, setLoading] = useState(false); // loading
+  const maxFiles = 1; /// validate số ảnh tối đa được upload
   const dispatch = useDispatch();
   const [dataLaptopSeris, setDataLaptopSeris] = useState([]);
   useEffect(() => {
@@ -51,22 +46,26 @@ const CreateProductPage = () => {
     )
       .unwrap()
       .then((res) => {
-        if (res.product._id) {
-          values.product_details.map((item) => {
-            dispatch(
-              createProductDetail({ ...item, product_id: res.product._id })
-            )
-              .unwrap()
-              .then(() => {
-                toast.success("Thêm sản phẩm thành công");
-                form.resetFields(); //reset form sau khi thành công
-              })
-              .catch((e) => {
-                console.log(e);
-              })
-              .finally(() => setLoading(false));
-          });
+        if (!res || !res.product._id) {
+          return message.warning("Không lấy được thông tin sản phẩm");
         }
+        if (!values || values.product_details.length === 0) {
+          return message.warning("Không lấy được dữ liệu từ form");
+        }
+        values.product_details.map((item) => {
+          dispatch(
+            createProductDetail({ ...item, product_id: res.product._id })
+          )
+            .unwrap()
+            .then(() => {
+              toast.success("Thêm sản phẩm thành công");
+              form.resetFields(); //reset form sau khi thành công
+            })
+            .catch((e) => {
+              console.log(e);
+            })
+            .finally(() => setLoading(false));
+        });
       })
       .catch((e) => {
         console.log(e);
@@ -121,58 +120,7 @@ const CreateProductPage = () => {
         </div>
         {/* form create product detail */}
         <div className="w-2/3">
-          <Form.List name="product_details" className="">
-            {(fields, { add, remove }, index) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    align="baseline"
-                    className="border-b border-gray-500 mb-5 grid grid-cols-3"
-                  >
-                    {productDetailAttributes.length != 0
-                      ? productDetailAttributes.map((item) => (
-                          <div>
-                            <Form.Item
-                              {...restField}
-                              name={[name, item.name]}
-                              rules={item.rules}
-                            >
-                              <Input placeholder={item.placeholder} />
-                            </Form.Item>
-                          </div>
-                        ))
-                      : null}
-                    <Form.Item {...restField} name={[name, "status"]}>
-                      <Select placeholder="Trạng thái sản phẩm theo cấu hình">
-                        <Option value="new">New</Option>
-                        <Option value="likenew">Like new</Option>
-                      </Select>
-                    </Form.Item>
-                    {fields.length > 1 && (
-                      <Button
-                        className="mb-2"
-                        danger
-                        icon={<MinusCircleOutlined />}
-                        onClick={() => remove(name)}
-                      >
-                        Hủy bỏ
-                      </Button>
-                    )}
-                  </Space>
-                ))}
-                <Form.Item className="block">
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm cấu hình cho sản phẩm
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
+          <FormProductDetails />
         </div>
         {/* Nút submit */}
       </Form>

@@ -6,7 +6,11 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import { useDispatch } from "react-redux";
 import { getAllProduct } from "../../../redux/slice/productSlice";
-import { EditOutlined, PlusCircleOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  PlusCircleOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import ModelCreateProductDetails from "./modelCreateProductDetails";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -17,7 +21,11 @@ const ProductAdminPage = () => {
   const [dataFilter, setDataFilter] = useState(dataSource);
   const [searchText, setSearchText] = useState("");
   const [dateRange, setDateRange] = useState([]);
-  const [isModalCreateProductDetailVisible, setIsModalCreateProductDetailVisible] = useState(false);
+  const [
+    isModalCreateProductDetailVisible,
+    setIsModalCreateProductDetailVisible,
+  ] = useState(false);
+  const [dataProduct, setDataProduct] = useState();
   const navigation = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -106,7 +114,14 @@ const ProductAdminPage = () => {
       title: "",
       render: (item, record, index) => (
         <div className="flex justify-end">
-          <Button onClick={() => setIsModalCreateProductDetailVisible(true)}><PlusCircleOutlined /> Thêm cấu hình</Button>
+          <Button
+            onClick={() => {
+              setDataProduct(record);
+              setIsModalCreateProductDetailVisible(true);
+            }}
+          >
+            <PlusCircleOutlined /> Thêm cấu hình
+          </Button>
         </div>
       ),
     },
@@ -114,7 +129,9 @@ const ProductAdminPage = () => {
       title: "",
       render: (item, record, index) => (
         <div className="flex justify-end">
-          <Button><QuestionCircleOutlined/> Chi tiết</Button>
+          <Button>
+            <QuestionCircleOutlined /> Chi tiết
+          </Button>
         </div>
       ),
     },
@@ -122,7 +139,9 @@ const ProductAdminPage = () => {
       title: "",
       render: (item, record, index) => (
         <div className="">
-          <Button><EditOutlined /></Button>
+          <Button>
+            <EditOutlined />
+          </Button>
         </div>
       ),
     },
@@ -151,6 +170,7 @@ const ProductAdminPage = () => {
         <ModelCreateProductDetails
           visible={isModalCreateProductDetailVisible}
           onClose={() => setIsModalCreateProductDetailVisible(false)}
+          dataProduct={dataProduct}
         />
         {/* Bảng hiển thị sản phẩm */}
         <Table dataSource={dataFilter} columns={columns} />
