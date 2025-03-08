@@ -1,14 +1,126 @@
-import { Button } from 'antd';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Table, Image, Input, DatePicker, Space, Button } from "antd";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import { useDispatch } from "react-redux";
+import { getAllProduct } from "../../../redux/slice/productSlice";
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+const { Search } = Input;
+const { RangePicker } = DatePicker;
 const ProductAdminPage = () => {
-    const navigation = useNavigate()
+  const [dataSource, setDataSource] = useState([]);
+  const [dataFilter, setDataFilter] = useState(dataSource);
+  const [searchText, setSearchText] = useState("");
+  const [dateRange, setDateRange] = useState([]);
+  const navigation = useNavigate();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAllProduct())
+      .unwrap()
+      .then((res) => {
+        if (res) {
+          setDataSource(
+            res.products.map((item) => ({
+              ...item,
+              date: dayjs(item.createdAt).format("YYYY-MM-DD"),
+            }))
+          );
+          
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+  useEffect(() => {
+    setDataFilter(dataSource);
+  }, [dataSource]);
+  // Xử lý tìm kiếm theo tên sản phẩm
+  const handleSearch = (value) => {
+    setSearchText(value.toLowerCase());
+    filterData(value, dateRange);
+  };
+
+  // Xử lý lọc theo khoảng ngày
+  const handleDateFilter = (dates) => {
+    setDateRange(dates);
+    filterData(searchText, dates);
+  };
+
+  // Hàm lọc dữ liệu
+  const filterData = (searchValue, dateValues) => {
+    let filteredData = dataSource;
+
+    // Lọc theo tên sản phẩm
+    if (searchValue) {
+      filteredData = filteredData.filter((item) =>
+        item.name.toLowerCase().includes(searchValue)
+      );
+    }
+
+    // Lọc theo ngày tháng
+    if (dateValues?.length === 2) {
+      const [start, end] = dateValues;
+      filteredData = filteredData.filter((item) => {
+        const itemDate = dayjs(item.date).startOf("day")
+        return (
+          dayjs(itemDate).isSameOrAfter(start.format("YYYY-MM-DD")) &&
+          dayjs(itemDate).isSameOrBefore(end.format("YYYY-MM-DD"))
+        );
+      });
+    }
+
+    setDataFilter(filteredData);
+  };
+  // Cột trong bảng
+  const columns = [
+    {
+      title: "Tên Sản Phẩm",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Ảnh Sản Phẩm",
+      dataIndex: "image",
+      key: "image",
+      render: (text) => <Image src={text} width={80} />,
+    },
+    {
+      title: "Hãng Sản Xuất",
+      dataIndex: "laptop_series_id",
+      key: "laptop_series_id",
+      render: (item, record, index) => <div>{item?.name}</div>,
+    },
+    {
+      title: "Ngày Nhập Kho",
+      dataIndex: "date",
+      key: "date",
+      render: (text) => dayjs(text).format("DD/MM/YYYY"),
+    },
+  ];
+
   return (
     <div>
-      <Button onClick={()=>navigation('/admin/products/create')} className=''>Thêm mới</Button>
+      <div>
+        {/* Thanh tìm kiếm & bộ lọc ngày */}
+        <Space style={{ marginBottom: 16 }}>
+          <Search
+            placeholder="Tìm kiếm sản phẩm..."
+            allowClear
+            onSearch={handleSearch}
+            style={{ width: 200 }}
+          />
+          <RangePicker onChange={handleDateFilter} />
+        </Space>
+
+        {/* Bảng hiển thị sản phẩm */}
+        <Table dataSource={dataFilter} columns={columns} />
+      </div>
     </div>
   );
-}
+};
 
-export default  ProductAdminPage;
+export default ProductAdminPage;

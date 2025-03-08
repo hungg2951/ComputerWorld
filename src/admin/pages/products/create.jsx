@@ -6,7 +6,11 @@ import { useDispatch } from "react-redux";
 import { laptopSerisGetAll } from "../../../redux/slice/laptopSerisSlice";
 import { createProduct } from "../../../redux/slice/productSlice";
 import { toast } from "react-toastify";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { productDetailAttributes } from "../../../ultis/dataTableProductDetails";
 import { createProductDetail } from "../../../redux/slice/productDetailSlice";
 
@@ -29,6 +33,7 @@ const CreateProductPage = () => {
       });
   }, []);
   const onFinish = async (values) => {
+    setLoading(true);
     let imageUrl = [];
     if (uploadRef.current) {
       imageUrl = await uploadRef.current.handleUpload();
@@ -58,7 +63,8 @@ const CreateProductPage = () => {
               })
               .catch((e) => {
                 console.log(e);
-              });
+              })
+              .finally(() => setLoading(false));
           });
         }
       })
@@ -116,7 +122,7 @@ const CreateProductPage = () => {
         {/* form create product detail */}
         <div className="w-2/3">
           <Form.List name="product_details" className="">
-            {(fields, { add, remove }) => (
+            {(fields, { add, remove }, index) => (
               <>
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
@@ -143,7 +149,16 @@ const CreateProductPage = () => {
                         <Option value="likenew">Like new</Option>
                       </Select>
                     </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(name)} />
+                    {fields.length > 1 && (
+                      <Button
+                        className="mb-2"
+                        danger
+                        icon={<MinusCircleOutlined />}
+                        onClick={() => remove(name)}
+                      >
+                        Hủy bỏ
+                      </Button>
+                    )}
                   </Space>
                 ))}
                 <Form.Item className="block">
