@@ -98,9 +98,9 @@ const CreateProductPage = () => {
 
           {/* Select chọn danh mục */}
           <Form.Item
-            label="Danh mục"
+            label="Dòng sản phẩm"
             name="laptop_series_id"
-            rules={[{ required: true, message: "Vui lòng chọn danh mục!" }]}
+            rules={[{ required: true, message: "Vui lòng chọn dòng sản phẩm!" }]}
           >
             <Select placeholder="Chọn danh mục">
               {dataLaptopSeris.length != 0

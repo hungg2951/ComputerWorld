@@ -12,6 +12,7 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import ModelCreateProductDetails from "./modelCreateProductDetails";
+import Update from "./update";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 const { Search } = Input;
@@ -25,7 +26,12 @@ const ProductAdminPage = () => {
     isModalCreateProductDetailVisible,
     setIsModalCreateProductDetailVisible,
   ] = useState(false);
+  const [modalUpdate, setModalUpdate] = useState(false);
   const [dataProduct, setDataProduct] = useState();
+  const [onChangeUpdateProduct, setOnChangeUpdateProduct] = useState(false);
+  const OnChangeEditProduct = ()=>{
+    setOnChangeUpdateProduct(!onChangeUpdateProduct)
+  }
   const navigation = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -44,7 +50,7 @@ const ProductAdminPage = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [onChangeUpdateProduct]);
   useEffect(() => {
     setDataFilter(dataSource);
   }, [dataSource]);
@@ -139,7 +145,12 @@ const ProductAdminPage = () => {
       title: "",
       render: (item, record, index) => (
         <div className="">
-          <Button>
+          <Button
+            onClick={() => {
+              setDataProduct(record);
+              setModalUpdate(true);
+            }}
+          >
             <EditOutlined />
           </Button>
         </div>
@@ -167,10 +178,18 @@ const ProductAdminPage = () => {
             Thêm sản phẩm mới
           </Button>
         </Space>
+        {/* modal create product details */}
         <ModelCreateProductDetails
           visible={isModalCreateProductDetailVisible}
           onClose={() => setIsModalCreateProductDetailVisible(false)}
           dataProduct={dataProduct}
+        />
+        {/* modal update product */}
+        <Update
+          visible={modalUpdate}
+          onClose={() => setModalUpdate(false)}
+          dataProduct={dataProduct}
+          OnChangeEditProduct={OnChangeEditProduct}
         />
         {/* Bảng hiển thị sản phẩm */}
         <Table dataSource={dataFilter} columns={columns} />

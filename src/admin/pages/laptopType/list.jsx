@@ -173,7 +173,7 @@ const List = ({ change }) => {
       <Table
         columns={columns}
         dataSource={dataSource}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 7 }}
         onRow={(record) => ({
           onClick: () => {
             setDetailData(record);
