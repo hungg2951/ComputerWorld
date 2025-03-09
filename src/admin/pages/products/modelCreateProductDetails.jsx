@@ -9,27 +9,41 @@ import { toast } from "react-toastify";
 const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false); // loading
+  const [ref, setRef] = useState(); // Lưu biến từ con gửi lên
   const dispatch = useDispatch();
   useEffect(() => {
     if (!visible) {
       form.resetFields();
-      setLoading(false)
+      setLoading(false);
     }
   }, [visible, form]);
+  console.log("ref", ref);
   const handleSubmit = () => {
     setLoading(true);
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (!dataProduct) {
           return message.warning("Không lấy được thông tin sản phẩm");
         }
         if (!values || values.product_details.length === 0) {
-            return message.warning("Không lấy được dữ liệu từ form");
+          return message.warning("Không lấy được dữ liệu từ form");
         }
-        values.product_details.map((item) => {
+        let imageUrl = [];
+        if (ref.current) {
+          imageUrl = await ref.current.handleUpload();
+          if (!imageUrl || imageUrl.length === 0) {
+            setLoading(false);
+            message.error(`Vui lòng chọn ít nhất 1 ảnh!`);
+            return;
+          }
+          values.product_details.map((item) => {
             dispatch(
-              createProductDetail({ ...item, product_id: dataProduct._id })
+              createProductDetail({
+                ...item,
+                product_id: dataProduct._id,
+                images: imageUrl,
+              })
             )
               .unwrap()
               .then(() => {
@@ -43,6 +57,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
               })
               .finally(() => setLoading(false));
           });
+        }
       })
       .catch((error) => {
         console.log("Validation Failed:", error);
@@ -78,7 +93,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
           layout="vertical"
           initialValues={{ product_details: [{}] }}
         >
-          <FormProductDetails />
+          <FormProductDetails onRef={setRef} />
         </Form>
       </Modal>
     </div>

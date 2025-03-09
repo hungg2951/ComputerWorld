@@ -1,9 +1,15 @@
-import { Button, Form, Input, Select, Space } from "antd";
-import React from "react";
+import { Button, Form, Input, message, Select, Space } from "antd";
+import React, { useEffect, useRef } from "react";
 import { productDetailAttributes } from "../../../ultis/dataTableProductDetails";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import UploadPage from "../uploads/upload";
 const { Option } = Select;
-const FormProductDetails = () => {
+const FormProductDetails = ({ onRef }) => {
+  const uploadRef = useRef(null);
+
+  useEffect(() => {
+    onRef(uploadRef);
+  }, [onRef]);
   return (
     <div>
       <Form.List name="product_details" className="">
@@ -34,6 +40,9 @@ const FormProductDetails = () => {
                     <Option value="likenew">Like new</Option>
                   </Select>
                 </Form.Item>
+
+                <UploadPage maxFiles={5} ref={uploadRef} />
+
                 {fields.length > 1 && (
                   <Button
                     className="mb-2"

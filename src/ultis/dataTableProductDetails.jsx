@@ -12,7 +12,7 @@ export const productDetailAttributes = [
   {
     name: "storage",
     placeholder: "Ổ cứng (SSD 512GB, HDD 1TB)",
-    rules: [{ required: false, message: "Không được để trống" }],
+    rules: [{ required: true, message: "Không được để trống" }],
   },
   {
     name: "display",

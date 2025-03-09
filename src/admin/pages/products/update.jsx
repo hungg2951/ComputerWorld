@@ -19,7 +19,7 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
     setChangeChoooseImage(true);
   };
   const onFinish = async (values) => {
-    setLoading(true);
+    // setLoading(true);
     if (!dataProduct) return message.error("Không lấy được dữ liệu sản phẩm");
     if (!values) return message.error("Không lấy được dữ liệu từ form");
     values = { ...values, id: dataProduct._id };
@@ -40,7 +40,7 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
           .catch((e) => {
             toast.error(e);
           })
-          .finally(() => setLoading(false));
+        //   .finally(() => setLoading(false));
         return;
       }
       // nếu người dùng không chọn ảnh thì chỉ update text
