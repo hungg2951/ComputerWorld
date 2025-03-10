@@ -135,7 +135,7 @@ const ProductAdminPage = () => {
       title: "",
       render: (item, record, index) => (
         <div className="flex justify-end">
-          <Button>
+          <Button onClick={() => navigation(`/admin/product/${record.slug}`)}>
             <QuestionCircleOutlined /> Chi tiết
           </Button>
         </div>
@@ -171,7 +171,7 @@ const ProductAdminPage = () => {
           />
           <RangePicker onChange={handleDateFilter} />
           <Button
-            onClick={() => navigation("/admin/products/create")}
+            onClick={() => navigation("/admin/product/create")}
             type="primary"
           >
             <PlusCircleOutlined />

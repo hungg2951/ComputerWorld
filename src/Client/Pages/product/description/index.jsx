@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import ModalProductDetail from "../../../../components/modalProductDetail";
 const DescriptionProduct = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [onOpenModalProductdetail, setOnOpenModalProductdetail] = useState(false);
   const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+    setOnOpenModalProductdetail(true);
   };
   return (
     <>
@@ -135,54 +130,7 @@ const DescriptionProduct = () => {
       {/* popup */}
       <div className="flex justify-center items-center ">
         {/* Modal Popup */}
-        <Modal
-          title={<h2 className="text-2xl font-bold">Thông số kỹ thuật</h2>}
-          open={isModalOpen}
-          onCancel={handleCancel}
-          footer={null}
-          width={900} // Set width giống ảnh
-          className="custom-modal"
-        >
-          <h3 className="text-blue-600 font-semibold text-lg mb-3">
-            Thông số kỹ thuật Laptop Dell Precision 15 5560
-          </h3>
-
-          {/* Bảng thông số kỹ thuật */}
-          <table className="w-full border-collapse border border-gray-300">
-            <tbody>
-              {[
-                [
-                  "CPU",
-                  "Intel Core Processor i7-11800H (8 Core, 24MB Cache, 2.40 GHz to 4.60 GHz, 45W)",
-                ],
-                ["RAM", "16 GB, 2x8 GB, DDR4, 3200 MHz"],
-                ["Ổ cứng", "1TB, Gen 3 PCIe x4 NVMe, Solid State Drive"],
-                ["Card VGA", "NVIDIA® RTX™ A2000 4GB GDDR6"],
-                [
-                  "Màn hình",
-                  "15.6-inch, FHD+ 1920 x 1200 InfinityEdge, 60 Hz, anti-glare, low blue light, non-touch, 500 nits, sRGB 100% min, wide-viewing angle",
-                ],
-                [
-                  "Cổng kết nối",
-                  "Type-C, 1 Jack 3.5 mm, 1 Thunderbolt, 1 khe cắm thẻ nhớ SD",
-                ],
-                ["Trọng lượng", "1.84 kg"],
-                ["Pin", "86 Whr"],
-                ["Hệ điều hành", "Windows 11 bản quyền"],
-              ].map(([title, value], index) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-                >
-                  <td className="border border-gray-300 px-4 py-2 font-semibold w-1/4">
-                    {title}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">{value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Modal>
+        <ModalProductDetail onClose = {()=>setOnOpenModalProductdetail(false)} visible = {onOpenModalProductdetail}/>
       </div>
     </>
   );

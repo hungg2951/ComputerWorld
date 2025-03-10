@@ -34,6 +34,18 @@ export const getAllProductDetail = createAsyncThunk(
     }
   }
 );
+
+export const getProductDetailByProduct = createAsyncThunk(
+  "product-detail/getByProduct",
+  async (id_product, { rejectWithValue }) => {
+    try {
+      const { data } = await productDetailAPI.getByProduct(id_product);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 //
 const initialState = {
   products_detail: [],

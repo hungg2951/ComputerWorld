@@ -4,8 +4,8 @@ export const productAPI  = {
     getAll(){
         return instance.get("/products")
     },
-    getBySlug(){
-        return null
+    getBySlug(slug){
+        return instance.get(`/product/${slug}`)
     },
     create(data){
         return  instance.post("/product",data)

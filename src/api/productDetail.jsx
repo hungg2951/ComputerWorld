@@ -9,5 +9,8 @@ export const productDetailAPI = {
     },
     update(data){
         return instance.patch("products-detail",data)
+    },
+    getByProduct(id_product){
+        return instance.get(`product-detail/${id_product}`)
     }
 }
