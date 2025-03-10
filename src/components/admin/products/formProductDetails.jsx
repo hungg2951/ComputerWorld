@@ -1,9 +1,9 @@
-import { Button, Form, Input, Select, Space } from "antd";
+import { Button, DatePicker, Form, Input, Select, Space } from "antd";
 import React from "react";
 import { productDetailAttributes } from "../../../ultis/dataTableProductDetails";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
-const FormProductDetails = ( ) => {
+const FormProductDetails = () => {
   return (
     <div>
       <Form.List name="product_details" className="">
@@ -33,6 +33,9 @@ const FormProductDetails = ( ) => {
                     <Option value="new">New</Option>
                     <Option value="likenew">Like new</Option>
                   </Select>
+                </Form.Item>
+                <Form.Item {...restField} name={[name, "year"]}>
+                  <DatePicker picker="year" format="YYYY" placeholder="Năm sản xuất"/>
                 </Form.Item>
                 {fields.length > 1 && (
                   <Button

@@ -1,5 +1,10 @@
 export const productDetailAttributes = [
   {
+    name: "name",
+    placeholder: `Tên rút gọn "i7 14650HX RAM 16GB SSD 1TB RTX 4060 16" 2.5K 165Hz"`,
+    rules: [{ required: true, message: "Không được để trống" }],
+  },
+  {
     name: "cpu",
     placeholder: "CPU (Intel Core i7, Ryzen 7, v.v.)",
     rules: [{ required: true, message: "Không được để trống" }],
@@ -17,6 +22,11 @@ export const productDetailAttributes = [
   {
     name: "display",
     placeholder: `Màn hình (15.6" FHD, 17.3" 4K`,
+    rules: [{ required: true, message: "Không được để trống" }],
+  },
+  {
+    name: "scanFrequency",
+    placeholder: `Tần số quét (165Hz)`,
     rules: [{ required: true, message: "Không được để trống" }],
   },
   {
@@ -45,6 +55,11 @@ export const productDetailAttributes = [
   {
     name: "os",
     placeholder: `Hệ điều hành (Window 11)`,
+    rules: [{ message: "Không được để trống" }],
+  },
+  {
+    name: "connectionPort",
+    placeholder: `Cổng kết nối (Type-C 1 Jack 3.5 mm 1 Thunderbolt 1 khe cắm thẻ nhớ SD  )`,
     rules: [{ message: "Không được để trống" }],
   },
   {

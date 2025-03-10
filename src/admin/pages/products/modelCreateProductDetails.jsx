@@ -5,6 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { createProductDetail } from "../../../redux/slice/productDetailSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
   const [form] = Form.useForm();
@@ -21,6 +22,8 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
     form
       .validateFields()
       .then(async (values) => {
+        // return console.log(values);
+
         if (!dataProduct) {
           return message.warning("Không lấy được thông tin sản phẩm");
         }
@@ -28,6 +31,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
           return message.warning("Không lấy được dữ liệu từ form");
         }
         values.product_details.map((item) => {
+          item.year ? (item.year = dayjs(item.year).format("YYYY")) : null;
           dispatch(
             createProductDetail({
               ...item,
@@ -58,7 +62,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
       <Modal
         width={1000}
         className="w-full"
-        title={`Thêm cấu hình cho "${dataProduct ? dataProduct.name : ""}"`}
+        title={`Tạo cấu hình nhanh cho "${dataProduct ? dataProduct.name : ""}"`}
         open={visible}
         onCancel={onClose}
         footer={[

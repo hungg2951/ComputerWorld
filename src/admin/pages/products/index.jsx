@@ -192,7 +192,7 @@ const ProductAdminPage = () => {
           OnChangeEditProduct={OnChangeEditProduct}
         />
         {/* Bảng hiển thị sản phẩm */}
-        <Table dataSource={dataFilter} columns={columns} />
+        <Table dataSource={dataFilter} columns={columns}  pagination={{ pageSize: 5}}/>
       </div>
     </div>
   );
