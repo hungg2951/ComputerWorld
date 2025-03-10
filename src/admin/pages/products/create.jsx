@@ -35,6 +35,7 @@ const CreateProductPage = () => {
     }
     if (!imageUrl || imageUrl.length === 0) {
       message.error(`Vui lòng chọn ${maxFiles} ảnh!`);
+      setLoading(false);
       return;
     }
     dispatch(
@@ -47,7 +48,7 @@ const CreateProductPage = () => {
       .unwrap()
       .then((res) => {
         if (!res || !res.product._id) {
-          return message.warning("Không lấy được thông tin sản phẩm");
+          return message.warning("Thêm sản phẩm lỗi");
         }
         if (!values || values.product_details.length === 0) {
           return message.warning("Không lấy được dữ liệu từ form");
@@ -68,7 +69,8 @@ const CreateProductPage = () => {
         });
       })
       .catch((e) => {
-        console.log(e);
+        setLoading(false);
+        message.error(e.message);
       });
   };
 
@@ -100,10 +102,12 @@ const CreateProductPage = () => {
           <Form.Item
             label="Dòng sản phẩm"
             name="laptop_series_id"
-            rules={[{ required: true, message: "Vui lòng chọn dòng sản phẩm!" }]}
+            rules={[
+              { required: true, message: "Vui lòng chọn dòng sản phẩm!" },
+            ]}
           >
             <Select placeholder="Chọn danh mục">
-              {dataLaptopSeris.length != 0
+              {Array.isArray(dataLaptopSeris) && dataLaptopSeris.length !== 0
                 ? dataLaptopSeris.map((item) => (
                     <Option key={item._id} value={item._id}>
                       {item.name}

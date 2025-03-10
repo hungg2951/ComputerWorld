@@ -8,7 +8,7 @@ export const createProduct = createAsyncThunk(
       const { data } = await productAPI.create(values);
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -16,10 +16,10 @@ export const updateProduct = createAsyncThunk(
   "product/update",
   async (values, { rejectWithValue }) => {
     try {
-      const { data } = await productAPI.update(values);
+      const {data} = await productAPI.update(values);
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -30,7 +30,7 @@ export const getAllProduct = createAsyncThunk(
       const { data } = await productAPI.getAll();
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
