@@ -13,11 +13,6 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
   const [dataLaptopSeris, setDataLaptopSeris] = useState([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const [changeChoooseImage, setChangeChoooseImage] = useState(false);
-  //update product
-  const handleChange = () => {
-    setChangeChoooseImage(true);
-  };
   const onFinish = async (values) => {
     // setLoading(true);
     if (!dataProduct) return message.error("Không lấy được dữ liệu sản phẩm");
@@ -25,36 +20,21 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
     values = { ...values, id: dataProduct._id };
     let imageUrl = [];
     if (uploadRef.current) {
-      if (changeChoooseImage) {
-        // nếu người dùng chọn ảnh thì update cả ảnh
-        imageUrl = await uploadRef.current.handleUpload();
-        if (imageUrl.length === 0) return message.error("Vui lòng chọn 1 ảnh");
-        dispatch(updateProduct({ ...values, image: imageUrl[0] }))
-          .unwrap()
-          .then(() => {
-            toast.success("Đã chỉnh sửa sản phẩm");
-            OnChangeEditProduct(); // hàm làm mới data products
-            onClose(); // hàm đóng modal
-            setChangeChoooseImage(false); // trả lại về giá trị ban đầu
-          })
-          .catch((e) => {
-            toast.error(e);
-          })
-        //   .finally(() => setLoading(false));
-        return;
-      }
-      // nếu người dùng không chọn ảnh thì chỉ update text
-      dispatch(updateProduct(values))
+      imageUrl = await uploadRef.current.handleUpload();
+      if (!imageUrl || imageUrl.length === 0)
+        return message.error("Vui lòng chọn 1 ảnh");
+      dispatch(updateProduct({ ...values, image: imageUrl[0] }))
         .unwrap()
         .then(() => {
           toast.success("Đã chỉnh sửa sản phẩm");
           OnChangeEditProduct(); // hàm làm mới data products
           onClose(); // hàm đóng modal
         })
-        .catch(() => {
-          toast.error("Lỗi");
-        })
-        // .finally(() => setLoading(false));
+        .catch((e) => {
+          toast.error(e);
+        });
+      //   .finally(() => setLoading(false));
+      return;
     }
   };
 
@@ -91,7 +71,6 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
             ref={uploadRef}
             maxFiles={1}
             defaultImages={dataProduct ? [dataProduct.image] : []}
-            handleChange={handleChange}
           />
           <Form.Item
             label="Tên sản phẩm"

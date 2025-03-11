@@ -33,40 +33,33 @@ export const productDetailAttributes = [
     name: "price",
     placeholder: "Giá sản phẩm",
     rules: [
-      { required: true, message: "Không được để trống" },
       { pattern: /^[0-9]+$/, message: "Sai định dạng vui lòng nhập số!" },
     ],
   },
   {
     name: "gpu",
     placeholder: `Card đồ họa (RTX 4060, Intel Iris Xe, v.v.)`,
-    rules: [{ message: "Không được để trống" }],
   },
   {
     name: "battery",
     placeholder: `Dung lượng pin (56Wh, 99Wh)`,
-    rules: [{ message: "Không được để trống" }],
   },
   {
     name: "weight",
     placeholder: `Cân nặng (1.5kg, 2.3kg, v.v.)`,
-    rules: [{ message: "Không được để trống" }],
   },
   {
     name: "os",
     placeholder: `Hệ điều hành (Window 11)`,
-    rules: [{ message: "Không được để trống" }],
   },
   {
     name: "connectionPort",
     placeholder: `Cổng kết nối (Type-C 1 Jack 3.5 mm 1 Thunderbolt 1 khe cắm thẻ nhớ SD  )`,
-    rules: [{ message: "Không được để trống" }],
   },
   {
     name: "warranty",
     placeholder: `Bảo hành (tháng)`,
     rules: [
-      { message: "Không được để trống" },
       { pattern: /^[0-9]+$/, message: "Sai định dạng vui lòng nhập số!" },
     ],
   },
@@ -74,7 +67,6 @@ export const productDetailAttributes = [
     name: "stock",
     placeholder: `Số lượng trong kho`,
     rules: [
-      { message: "Không được để trống" },
       { pattern: /^[0-9]+$/, message: "Sai định dạng vui lòng nhập số!" },
     ],
   },

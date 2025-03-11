@@ -7,6 +7,7 @@ import { Button, Table, Tag } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ModalProductDetail from "../../../../components/modalProductDetail";
 import UploadImages from "./uploadImages";
+import Update from "./update";
 const ProductDetailsByProduct = () => {
   const { slug } = useParams();
   const [product, setProduct] = useState();
@@ -14,14 +15,17 @@ const ProductDetailsByProduct = () => {
   const [productDetail, setProductDetail] = useState();
   const [onModalProductdetail, setOnModalProductdetail] = useState(false);
   const [onModalUploadImages, setOnModalUploadImages] = useState(false);
+  const [onModalUpDate, setOnModalUpDate] = useState(false);
+  const [onChangeData, setonChangeData] = useState(false);
   const dispatch = useDispatch();
-
+  const changeData = () => {
+    setonChangeData(!onChangeData);
+  };
   useEffect(() => {
-    if (!onModalUploadImages) {
+    if (!onModalUploadImages && !onModalProductdetail && !onModalUpDate) {
       setProductDetail(null);
     }
-  }, [onModalUploadImages]);
-
+  }, [onModalUploadImages, onModalProductdetail, onModalUpDate]);
 
   useEffect(() => {
     if (slug) {
@@ -46,8 +50,13 @@ const ProductDetailsByProduct = () => {
           console.log(e);
         });
     }
-  }, [product]);
+  }, [product, onChangeData]);
   const columns = [
+    {
+      title: "STT",
+      key: "_id",
+      render: (item, record, index) => <div key={index}>{index + 1}</div>,
+    },
     {
       title: "Tên sản phẩm",
       key: "name",
@@ -87,10 +96,14 @@ const ProductDetailsByProduct = () => {
       render: (item, record, index) => (
         <div className="flex gap-2" key={index}>
           <div>
-            <Button onClick={() => {
+            <Button
+              onClick={() => {
                 setProductDetail(record);
                 setOnModalUploadImages(true);
-              }}>Ảnh</Button>
+              }}
+            >
+              Ảnh
+            </Button>
           </div>
           <div>
             <Button
@@ -106,7 +119,12 @@ const ProductDetailsByProduct = () => {
             <Button onClick={() => {}}>Mô tả</Button>
           </div>
           <div>
-            <Button>
+            <Button
+              onClick={() => {
+                setProductDetail(record);
+                setOnModalUpDate(true);
+              }}
+            >
               <EditOutlined />
             </Button>
           </div>
@@ -122,18 +140,28 @@ const ProductDetailsByProduct = () => {
         dataSource={productDetails}
         pagination={{ pageSize: 10 }}
       />
+      {/* Chi tiết thông số */}
       <ModalProductDetail
         onClose={() => setOnModalProductdetail(false)}
         visible={onModalProductdetail}
         data={productDetail}
       />
+      {/* upload ảnh */}
       <UploadImages
         onClose={() => {
-          setOnModalUploadImages(false)
-          setOnModalProductdetail(null)
+          setOnModalUploadImages(false);
+          setOnModalProductdetail(null);
         }}
         visible={onModalUploadImages}
         data={productDetail}
+        changeData={changeData}
+      />
+      {/* Update thông số */}
+      <Update
+        onClose={() => setOnModalUpDate(false)}
+        visible={onModalUpDate}
+        data={productDetail}
+        onChangeData={changeData}
       />
     </>
   );

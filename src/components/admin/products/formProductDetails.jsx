@@ -1,9 +1,9 @@
-import { Button, DatePicker, Form, Input, Select, Space } from "antd";
+import { Button, DatePicker, Form, Input, message, Select, Space } from "antd";
 import React from "react";
 import { productDetailAttributes } from "../../../ultis/dataTableProductDetails";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
-const FormProductDetails = () => {
+const FormProductDetails = ({ onClose }) => {
   return (
     <div>
       <Form.List name="product_details" className="">
@@ -16,8 +16,8 @@ const FormProductDetails = () => {
                 className="border-b border-gray-500 mb-5 grid grid-cols-3"
               >
                 {productDetailAttributes.length != 0
-                  ? productDetailAttributes.map((item) => (
-                      <div>
+                  ? productDetailAttributes.map((item,index) => (
+                      <div key={index}>
                         <Form.Item
                           {...restField}
                           name={[name, item.name]}
@@ -34,8 +34,22 @@ const FormProductDetails = () => {
                     <Option value="likenew">Like new</Option>
                   </Select>
                 </Form.Item>
-                <Form.Item {...restField} name={[name, "year"]}>
-                  <DatePicker picker="year" format="YYYY" placeholder="Năm sản xuất"/>
+
+                <Form.Item
+                  {...restField}
+                  name={[name, "year"]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn năm sản xuất!",
+                    },
+                  ]}
+                >
+                  <DatePicker
+                    picker="year"
+                    format="YYYY"
+                    placeholder="Năm sản xuất"
+                  />
                 </Form.Item>
                 {fields.length > 1 && (
                   <Button
@@ -49,7 +63,7 @@ const FormProductDetails = () => {
                 )}
               </Space>
             ))}
-            <Form.Item className="block">
+            <Form.Item className={`${onClose}`}>
               <Button
                 type="dashed"
                 onClick={() => add()}

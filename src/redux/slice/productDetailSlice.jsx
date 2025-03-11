@@ -8,7 +8,7 @@ export const createProductDetail = createAsyncThunk(
       const { data } = await productDetailAPI.create(values);
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -19,7 +19,7 @@ export const updateProductDetail = createAsyncThunk(
       const { data } = await productDetailAPI.update(values);
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -30,7 +30,7 @@ export const getAllProductDetail = createAsyncThunk(
       const { data } = await productDetailAPI.getAll();
       return data;
     } catch (error) {
-      rejectWithValue(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );
