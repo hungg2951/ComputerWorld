@@ -8,6 +8,8 @@ import { createProduct } from "../../../redux/slice/productSlice";
 import { toast } from "react-toastify";
 import { createProductDetail } from "../../../redux/slice/productDetailSlice";
 import FormProductDetails from "../../../components/admin/products/formProductDetails";
+import { getAllData } from "../../../redux/slice/laptopTypeSlice";
+import { getAllBrands } from "../../../redux/slice/brandSlice";
 
 const { Option } = Select;
 const CreateProductPage = () => {
@@ -17,11 +19,31 @@ const CreateProductPage = () => {
   const maxFiles = 1; /// validate số ảnh tối đa được upload
   const dispatch = useDispatch();
   const [dataLaptopSeris, setDataLaptopSeris] = useState([]);
+  const [dataBrand, setDataBrands] = useState([]);
+  const [dataLaptopTypes, setDataLaptopTypes] = useState([]);
   useEffect(() => {
     dispatch(laptopSerisGetAll()) // lấy danh sách của bảng laptop seris
       .unwrap()
       .then((res) => {
         setDataLaptopSeris(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    dispatch(getAllBrands()) // lấy danh sách của bảng brand
+      .unwrap()
+      .then((res) => {
+        setDataBrands(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    dispatch(getAllData()) // lấy danh sách của bảng laptop types
+      .unwrap()
+      .then((res) => {
+        setDataLaptopTypes(res);
       })
       .catch((e) => {
         console.log(e);
@@ -98,15 +120,34 @@ const CreateProductPage = () => {
             <Input placeholder="Nhập tên sản phẩm" />
           </Form.Item>
 
-          {/* Select chọn danh mục */}
+          {/* Select chọn hãng */}
+          <Form.Item
+            label="Thương hiệu"
+            name="brand_id"
+            rules={[
+              { required: true, message: "Vui lòng chọn thương hiệu sản phẩm!" },
+            ]}
+          >
+            <Select placeholder="Chọn thương hiệu">
+              {Array.isArray(dataBrand) && dataBrand.length !== 0
+                ? dataBrand.map((item) => (
+                    <Option key={item._id} value={item._id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+
+          {/* Select chọn laptop seris */}
           <Form.Item
             label="Dòng sản phẩm"
-            name="laptop_series_id"
+            name="series_id"
             rules={[
               { required: true, message: "Vui lòng chọn dòng sản phẩm!" },
             ]}
           >
-            <Select placeholder="Chọn danh mục">
+            <Select placeholder="Chọn dòng sản phẩm">
               {Array.isArray(dataLaptopSeris) && dataLaptopSeris.length !== 0
                 ? dataLaptopSeris.map((item) => (
                     <Option key={item._id} value={item._id}>
@@ -116,6 +157,26 @@ const CreateProductPage = () => {
                 : null}
             </Select>
           </Form.Item>
+
+          {/* Select chọn laptop types */}
+          <Form.Item
+            label="Loại Laptop"
+            name="type_id"
+            rules={[
+              { required: true, message: "Vui lòng chọn loại laptop!" },
+            ]}
+          >
+            <Select placeholder="Chọn loại laptop">
+              {Array.isArray(dataLaptopTypes) && dataLaptopTypes.length !== 0
+                ? dataLaptopTypes.map((item) => (
+                    <Option key={item._id} value={item._id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
               Tạo sản phẩm

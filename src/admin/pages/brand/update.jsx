@@ -1,30 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Select } from "antd";
 import { useDispatch } from "react-redux";
-import { getAllData } from "../../../redux/slice/laptopTypeSlice";
 import { toast } from "react-toastify";
 import { updateBrand } from "../../../redux/slice/brandSlice";
 const Update = ({ open, close, detailData, onChangeEdit }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const [dataLaptopType, setDataLaptopType] = useState();
   useEffect(() => {
     if (detailData) {
-      form.setFieldsValue({ ...detailData,laptop_type_id: detailData.laptop_type_id._id });
+      form.setFieldsValue(detailData);
     }
   }, [detailData]);
-  useEffect(() => {
-    dispatch(getAllData())
-      .unwrap()
-      .then((res) => {
-        setDataLaptopType(res);
-      })
-      .catch((e) => {
-        {
-          console.log(e);
-        }
-      });
-  }, []);
   const handleOk = () => {
     form
       .validateFields()
@@ -70,23 +56,6 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
             rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
           >
             <Input placeholder="Nhập tên danh mục" />
-          </Form.Item>
-          <Form.Item
-            name="laptop_type_id"
-            rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
-          >
-            {dataLaptopType && dataLaptopType.length !== 0 ? (
-              <Select
-                placeholder="Chọn kiểu laptop"
-                className="w-full"
-              >
-                {dataLaptopType.map((item) => (
-                  <Option key={item._id} value={item._id}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
-            ) : null}
           </Form.Item>
         </Form>
       </Modal>

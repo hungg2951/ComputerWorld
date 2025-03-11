@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Button } from "antd";
+import { Modal, Form, Input, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { updateLaptopType } from "../../../redux/slice/laptopTypeSlice";
 import { toast } from "react-toastify";
@@ -27,7 +27,7 @@ const Update = ({ open, close, detailData,onChangeEdit }) => {
             })
             .catch((e)=>{
               console.log(e);
-              toast.success("Chỉnh sửa thất bại!")
+              message.warning(e.message)
             })
         }
       })

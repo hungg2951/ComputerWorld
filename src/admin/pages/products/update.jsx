@@ -5,12 +5,16 @@ import { laptopSerisGetAll } from "../../../redux/slice/laptopSerisSlice";
 import UploadPage from "../../../components/admin/uploads/upload";
 import { updateProduct } from "../../../redux/slice/productSlice";
 import { toast } from "react-toastify";
+import { getAllBrands } from "../../../redux/slice/brandSlice";
+import { getAllData } from "../../../redux/slice/laptopTypeSlice";
 
 const { Option } = Select;
 const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
   const uploadRef = useRef(null);
   const [form] = Form.useForm();
   const [dataLaptopSeris, setDataLaptopSeris] = useState([]);
+  const [dataBrand, setDataBrands] = useState([]);
+  const [dataLaptopTypes, setDataLaptopTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const onFinish = async (values) => {
@@ -38,12 +42,29 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
     }
   };
 
-  // lấy danh sách của bảng laptop seris
   useEffect(() => {
-    dispatch(laptopSerisGetAll())
+    dispatch(laptopSerisGetAll()) // lấy danh sách của bảng laptop seris
       .unwrap()
       .then((res) => {
         setDataLaptopSeris(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    dispatch(getAllBrands()) // lấy danh sách của bảng brand
+      .unwrap()
+      .then((res) => {
+        setDataBrands(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    dispatch(getAllData()) // lấy danh sách của bảng laptop types
+      .unwrap()
+      .then((res) => {
+        setDataLaptopTypes(res);
       })
       .catch((e) => {
         console.log(e);
@@ -52,9 +73,18 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
   // set default value
   useEffect(() => {
     if (dataProduct) {
+      if (
+        !dataProduct.series_id ||
+        !dataProduct.brand_id ||
+        !dataProduct.type_id
+      ) {
+        return;
+      }
       form.setFieldsValue({
         ...dataProduct,
-        laptop_series_id: dataProduct.laptop_series_id._id,
+        brand_id: dataProduct.brand_id._id,
+        series_id: dataProduct.series_id._id,
+        type_id: dataProduct.type_id._id,
       });
     }
   }, [dataProduct]);
@@ -80,9 +110,31 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
             <Input placeholder="Nhập tên..." />
           </Form.Item>
 
+          {/* Select chọn hãng */}
+          <Form.Item
+            label="Thương hiệu"
+            name="brand_id"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn thương hiệu sản phẩm!",
+              },
+            ]}
+          >
+            <Select placeholder="Chọn thương hiệu">
+              {Array.isArray(dataBrand) && dataBrand.length !== 0
+                ? dataBrand.map((item) => (
+                    <Option key={item._id} value={item._id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+
           <Form.Item
             label="Dòng sản phẩm"
-            name="laptop_series_id"
+            name="series_id"
             rules={[
               { required: true, message: "Vui lòng chọn dòng sản phẩm!" },
             ]}
@@ -90,6 +142,23 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
             <Select placeholder="Chọn danh mục">
               {dataLaptopSeris.length != 0
                 ? dataLaptopSeris.map((item) => (
+                    <Option key={item._id} value={item._id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+
+          {/* Select chọn laptop types */}
+          <Form.Item
+            label="Loại Laptop"
+            name="type_id"
+            rules={[{ required: true, message: "Vui lòng chọn loại laptop!" }]}
+          >
+            <Select placeholder="Chọn loại laptop">
+              {Array.isArray(dataLaptopTypes) && dataLaptopTypes.length !== 0
+                ? dataLaptopTypes.map((item) => (
                     <Option key={item._id} value={item._id}>
                       {item.name}
                     </Option>

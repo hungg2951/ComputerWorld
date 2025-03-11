@@ -10,12 +10,12 @@ const Create = ({onSubmit}) => {
     dispatch(createLaptopType(values))
       .unwrap()
       .then(() => {
-        message.success("Thêm danh mục thành công!");
+        message.success("Thêm loại laptop thành công!");
         form.resetFields();
         onSubmit()
       })
       .catch((e) => {
-        console.log(e);
+        message.warning(e.message)
       });
   };
   return (
@@ -24,9 +24,9 @@ const Create = ({onSubmit}) => {
         <Form.Item
         className="w-1/2"
           name="name"
-          rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
+          rules={[{ required: true, message: "Vui lòng nhập loại laptop!" }]}
         >
-          <Input placeholder="Nhập tên danh mục..." />
+          <Input placeholder="Nhập loại laptop..." />
         </Form.Item>
 
         <Form.Item>

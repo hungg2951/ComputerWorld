@@ -30,7 +30,7 @@ const Create = ({ onSubmit }) => {
         onSubmit();
       })
       .catch((e) => {
-        console.log(e);
+        message.warning(e.message)
       });
   };
   return (
