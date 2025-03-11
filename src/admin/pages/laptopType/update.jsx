@@ -27,7 +27,7 @@ const Update = ({ open, close, detailData,onChangeEdit }) => {
             })
             .catch((e)=>{
               console.log(e);
-              message.warning(e.message)
+              toast.warning(e.message)
             })
         }
       })

@@ -151,20 +151,23 @@ const List = ({ change }) => {
   });
   const columns = [
     {
+      title: "STT",
+      key: "_id",
+      render:(item,record,index)=><div>{index+1}</div>
+    },
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "90%",
       ...getColumnSearchProps("name"),
     },
     {
       title: "Hành động",
       key: "name",
-      width: "20px",
       render: (item, record, index) => (
-        <div onClick={() => openModel()}>
-          <EditOutlined className="cursor-pointer" />
-        </div>
+        <Button onClick={() => openModel()}>
+          <EditOutlined className="cursor-pointer" />Chỉnh sửa
+        </Button>
       ),
     },
   ];

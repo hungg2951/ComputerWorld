@@ -151,20 +151,32 @@ const List = ({ change }) => {
   });
   const columns = [
     {
+      title: "STT",
+      key: "_id",
+      render:(item,record,index)=><div>{index+1}</div>
+    },
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "90%",
+      // width: "90%",
       ...getColumnSearchProps("name"),
+    },
+    {
+      title: "Logo",
+      key: "logo",
+      // width: "90%",
+      render:(item,record,index)=><img className="w-14" src={record.logo} alt="" />
     },
     {
       title: "Hành động",
       key: "name",
-      width: "20px",
+      // width: "20px",
       render: (item, record, index) => (
-        <div onClick={() => openModel()}>
+        <Button onClick={() => openModel()}>
           <EditOutlined className="cursor-pointer" />
-        </div>
+          Chỉnh sửa
+        </Button>
       ),
     },
   ];

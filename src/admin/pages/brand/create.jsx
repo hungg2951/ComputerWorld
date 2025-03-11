@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, message, Select } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Form, Input, Button, message } from "antd";
 import { useDispatch } from "react-redux";
 import { createBrand } from "../../../redux/slice/brandSlice";
 import { FileAddOutlined } from "@ant-design/icons";
+import UploadPage from "../../../components/admin/uploads/upload";
+
 const Create = ({ onSubmit }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
- 
-  const onFinish = (values) => {
-    // return console.log(values);
-    dispatch(createBrand(values))
+  const uploadRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const onFinish = async (values) => {
+    setLoading(true)
+    let imageUrl = [];
+    if (uploadRef.current) {
+      imageUrl = await uploadRef.current.handleUpload();
+    }
+    if (!imageUrl || imageUrl.length === 0) {
+      message.error(`Vui lòng chọn ảnh!`);
+      setLoading(false);
+      return;
+    }
+    dispatch(createBrand({...values,logo:imageUrl[0]}))
       .unwrap()
       .then(() => {
         message.success("Thêm hãng thành công!");
@@ -17,8 +29,9 @@ const Create = ({ onSubmit }) => {
         onSubmit();
       })
       .catch((e) => {
-        message.warning(e.message)
-      });
+        message.warning(e.message);
+      })
+      .finally(()=>setLoading(false))
   };
   return (
     <div>
@@ -35,10 +48,14 @@ const Create = ({ onSubmit }) => {
         >
           <Input placeholder="Nhập tên hãng..." />
         </Form.Item>
-       
+
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-          <FileAddOutlined /> Tạo mới
+          <UploadPage ref={uploadRef} maxFiles={1} />
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            <FileAddOutlined /> Tạo mới
           </Button>
         </Form.Item>
       </Form>

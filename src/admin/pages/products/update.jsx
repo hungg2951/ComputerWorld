@@ -74,20 +74,21 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
   useEffect(() => {
     if (dataProduct) {
       if (
-        !dataProduct.series_id ||
-        !dataProduct.brand_id ||
-        !dataProduct.type_id
+        dataProduct.type_id &&
+        dataProduct.brand_id &&
+        dataProduct.series_id
       ) {
-        return;
+        form.setFieldsValue({
+          ...dataProduct,
+          brand_id: dataProduct.brand_id._id,
+          series_id: dataProduct.series_id._id,
+          type_id: dataProduct.type_id._id,
+        });
       }
-      form.setFieldsValue({
-        ...dataProduct,
-        brand_id: dataProduct.brand_id._id,
-        series_id: dataProduct.series_id._id,
-        type_id: dataProduct.type_id._id,
-      });
     }
   }, [dataProduct]);
+  console.log(dataProduct);
+
   return (
     <div>
       <Modal

@@ -94,6 +94,11 @@ const ProductAdminPage = () => {
   // Cột trong bảng
   const columns = [
     {
+      title: "STT",
+      key: "_id",
+      render:(item,record,index)=><div>{index+1}</div>
+    },
+    {
       title: "Tên Sản Phẩm",
       dataIndex: "name",
       key: "name",
@@ -106,8 +111,8 @@ const ProductAdminPage = () => {
     },
     {
       title: "Hãng Sản Xuất",
-      dataIndex: "laptop_series_id",
-      key: "laptop_series_id",
+      dataIndex: "brand_id",
+      key: "brand_id",
       render: (item, record, index) => <div>{item?.name}</div>,
     },
     {

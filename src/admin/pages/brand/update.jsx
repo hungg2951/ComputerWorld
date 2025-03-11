@@ -1,36 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Button, Select } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Modal, Form, Input, Button, Select, message } from "antd";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { updateBrand } from "../../../redux/slice/brandSlice";
+import UploadPage from "../../../components/admin/uploads/upload";
 const Update = ({ open, close, detailData, onChangeEdit }) => {
   const [form] = Form.useForm();
+  const uploadRef = useRef(null);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (detailData) {
       form.setFieldsValue(detailData);
     }
   }, [detailData]);
   const handleOk = () => {
+    setLoading(true);
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (detailData) {
-          dispatch(updateBrand({ ...values, id: detailData._id }))
-            .unwrap()
-            .then(() => {
-              form.resetFields();
-              toast.success("Chỉnh sửa thành công !");
-              onChangeEdit();
-              close();
-            })
-            .catch((e) => {
-              console.log(e);
-              toast.success("Chỉnh sửa thất bại!");
-            });
+          let imageUrl = [];
+          if (uploadRef.current) {
+            imageUrl = await uploadRef.current.handleUpload();
+            if (!imageUrl || imageUrl.length === 0) {
+              setLoading(true);
+              message.error("Vui lòng chọn 1 ảnh");
+              returnn;
+            }
+            dispatch(
+              updateBrand({ ...values, id: detailData._id, logo: imageUrl[0] })
+            )
+              .unwrap()
+              .then(() => {
+                form.resetFields();
+                toast.success("Chỉnh sửa thành công !");
+                onChangeEdit();
+                close();
+              })
+              .catch((e) => {
+                console.log(e);
+                toast.warning(e.message);
+              })
+              .finally(() => setLoading(false));
+          }
         }
       })
       .catch((info) => {
+        setLoading(false);
         console.log("Lỗi nhập dữ liệu:", info);
       });
   };
@@ -44,7 +61,7 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
           <Button key="cancel" onClick={close}>
             Hủy
           </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button key="submit" type="primary" onClick={handleOk} loading={loading}>
             Cập nhật
           </Button>,
         ]}
@@ -56,6 +73,14 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
             rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
           >
             <Input placeholder="Nhập tên danh mục" />
+          </Form.Item>
+
+          <Form.Item>
+            <UploadPage
+              ref={uploadRef}
+              maxFiles={1}
+              defaultImages={detailData ? [detailData.logo] : []}
+            />
           </Form.Item>
         </Form>
       </Modal>

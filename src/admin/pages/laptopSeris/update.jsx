@@ -34,13 +34,13 @@ const Update = ({ open, close, detailData, onChangeEdit }) => {
             .unwrap()
             .then(() => {
               form.resetFields();
-              toast.success("Chỉnh sửa thành công !");
+              toast.success("Đã lưu chỉnh sửa !");
               onChangeEdit();
               close();
             })
             .catch((e) => {
               console.log(e);
-              toast.success("Chỉnh sửa thất bại!");
+              toast.warning(e.message);
             });
         }
       })
