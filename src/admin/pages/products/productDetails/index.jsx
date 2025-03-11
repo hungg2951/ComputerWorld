@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getProductBySlug } from "../../../../redux/slice/productSlice";
 import { getProductDetailByProduct } from "../../../../redux/slice/productDetailSlice";
 import { Button, Table, Tag } from "antd";
@@ -18,6 +18,7 @@ const ProductDetailsByProduct = () => {
   const [onModalUpDate, setOnModalUpDate] = useState(false);
   const [onChangeData, setonChangeData] = useState(false);
   const dispatch = useDispatch();
+  const navigation = useNavigate()
   const changeData = () => {
     setonChangeData(!onChangeData);
   };
@@ -116,7 +117,7 @@ const ProductDetailsByProduct = () => {
             </Button>
           </div>
           <div>
-            <Button onClick={() => {}}>Mô tả</Button>
+            <Button onClick={() =>navigation(`/admin/product-detail/${record._id}`)}>Mô tả</Button>
           </div>
           <div>
             <Button

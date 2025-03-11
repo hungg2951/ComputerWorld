@@ -35,6 +35,18 @@ export const getAllProductDetail = createAsyncThunk(
   }
 );
 
+export const getOneProductDetail = createAsyncThunk(
+  "product-detail/getOne",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await productDetailAPI.getOne(id);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getProductDetailByProduct = createAsyncThunk(
   "product-detail/getByProduct",
   async (id_product, { rejectWithValue }) => {

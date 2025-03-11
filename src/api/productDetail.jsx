@@ -11,6 +11,9 @@ export const productDetailAPI = {
         return instance.patch("product-detail",data)
     },
     getByProduct(id_product){
-        return instance.get(`product-detail/${id_product}`)
+        return instance.get(`product-detail-by-product/${id_product}`)
+    },
+    getOne(id){
+        return instance.get(`product-detail/${id}`)
     }
 }

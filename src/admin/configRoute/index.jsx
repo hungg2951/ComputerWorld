@@ -6,6 +6,7 @@ import LaptopType from "../pages/laptopType";
 import ProductAdminPage from "../pages/products";
 import CreateProductPage from "../pages/products/create";
 import ProductDetailsByProduct from "../pages/products/productDetails";
+import CreateDescription from "../pages/products/productDetails/createDesc";
 import ListUsers from "../pages/users";
 import ProtectedRoute from "../ProtectedRoute";
 
@@ -52,6 +53,10 @@ const RoutePrivate = [
           {
             path: "product/:slug",
             element: <ProductDetailsByProduct />,
+          },
+          {
+            path: "product-detail/:id",
+            element: <CreateDescription />,
           },
         ],
       },
