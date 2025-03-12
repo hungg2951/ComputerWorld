@@ -15,7 +15,7 @@ const RoutePublic = [
         element: <HomePage />,
       },
       {
-        path: "product/:id",
+        path: "product/:slug",
         element: <ProductDetail />,
       },
       {

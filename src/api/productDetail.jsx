@@ -15,5 +15,8 @@ export const productDetailAPI = {
     },
     getOne(slug){
         return instance.get(`product-detail/${slug}`)
+    },
+    getBySeries(series_id){
+        return instance.get(`product-detail/series/${series_id}`)
     }
 }

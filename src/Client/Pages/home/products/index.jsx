@@ -12,7 +12,6 @@ import { formatCurrency } from "../../../../ultis/formatnumber";
 
 const Products = () => {
   const [dataProductDetails, setDataProductDetails] = useState([]);
-  console.log("🚀 ~ dataProductDetails:", dataProductDetails);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllProductDetail())
@@ -83,7 +82,7 @@ const Products = () => {
           {dataProductDetails &&
             dataProductDetails.map((product) => (
               <SwiperSlide key={product.id}>
-                <NavLink to={`/product/`}>
+                <NavLink to={`/product/${product.slug}`}>
                   <div className="relative border p-4 rounded-lg shadow-md bg-white h-80">
                     {product.discount && (
                       <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs md:text-sm font-semibold rounded-full">

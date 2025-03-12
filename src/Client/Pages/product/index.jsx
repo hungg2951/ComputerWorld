@@ -1,60 +1,81 @@
-import {
-  FaCheckCircle,
-  FaStar,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaFacebookF,
-} from "react-icons/fa";
+import { FaCheckCircle, FaStar, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillLike } from "react-icons/ai";
 import DescriptionProduct from "./description";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  getOneProductDetail,
+  getOneProductDetailBySeries,
+} from "../../../redux/slice/productDetailSlice";
+import { formatCurrency } from "../../../ultis/formatnumber";
 
 const ProductDetail = () => {
-  const configurations = [
-    {
-      id: 1,
-      cpu: "Core i7-11800H, 32GB, 512GB",
-      gpu: "Nvidia Quadro T1200, 15.6 FHD+",
-      price: "19.990.000đ",
-    },
-    {
-      id: 2,
-      cpu: "Core i7-11800H, 16GB, 1TB",
-      gpu: "Nvidia Quadro A2000, 15.6 FHD+",
-      price: "22.990.000đ",
-    },
-    {
-      id: 3,
-      cpu: "Core i7-10750H, 16GB, 512GB",
-      gpu: "Nvidia Quadro T1000, 15.6 FHD+",
-      price: "16.390.000đ",
-    },
-    {
-      id: 4,
-      cpu: "Core i7-10750H, 16GB, 512GB",
-      gpu: "Nvidia Quadro T2000, 15.6 FHD+",
-      price: "17.390.000đ",
-    },
-  ];
-  const images = [
-    "https://laptopworld.vn/media/product/20172_87249_pc_lenovo_aio_24irh9_f0hn0030vn_2.jpg",
-    "https://laptopworld.vn/media/product/20172_87249_pc_lenovo_aio_24irh9_f0hn0030vn_1.jpg",
-    "https://laptopworld.vn/media/product/20172_87249_pc_lenovo_aio_24irh9_f0hn0030vn_7.jpg",
-    "https://laptopworld.vn/media/product/20172_87249_pc_lenovo_aio_24irh9_f0hn0030vn_5.jpg",
-  ];
-  const [selectedConfig, setSelectedConfig] = useState(2);
+  const [selectedConfig, setSelectedConfig] = useState();
+  const [dataProductDetail, setdataProductDetail] = useState();
+  const [dataProductDetailBySeries, setdataProductDetailBySeries] = useState();
+  const navigation = useNavigate();
+  const { slug } = useParams();
+  const dispatch = useDispatch();
+  ///
+  useEffect(() => {
+    dispatch(getOneProductDetail(slug))
+      .unwrap()
+      .then((res) => {
+        setdataProductDetail(res.data);
+      })
+      .catch((e) => {
+        console.log("Lỗi", e);
+      });
+  }, [slug]);
+  /////
+  useEffect(() => {
+    if (dataProductDetail) {
+      setSelectedConfig(dataProductDetail._id);
+      dispatch(
+        getOneProductDetailBySeries(dataProductDetail.product_id.series_id)
+      )
+        .unwrap()
+        .then((res) => {
+          setdataProductDetailBySeries(res.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }, [dataProductDetail]);
+
+  const addToCart = () => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+    const existingProductIndex = cart.findIndex(
+      (item) => item._id === dataProductDetail._id
+    );
+
+    if (existingProductIndex !== -1) {
+      // Nếu có, tăng số lượng
+      cart[existingProductIndex].quantity += 1;
+    } else {
+      // Nếu chưa, thêm sản phẩm mới vào giỏ hàng
+      cart.push({ ...dataProductDetail, quantity: 1 });
+    }
+
+    // Lưu lại vào localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Sản phẩm đã được thêm vào giỏ hàng!");
+  };
   return (
     <div className=" p-4 mt-28 max-w-[1220px] mx-auto">
       {/* Product Info */}
       <div className="bg-white p-6 shadow-lg rounded-md grid grid-cols-12 gap-6 max-sm:block">
         {/* Left: Images */}
         <div className="col-span-4">
-          
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             slidesPerView={1}
@@ -62,21 +83,30 @@ const ProductDetail = () => {
             autoplay={{ delay: 3000 }}
             className="rounded-lg shadow-md"
           >
-            {images.map((src, index) => (
-              <SwiperSlide key={index}>
-                <img src={src} alt="Laptop" className="w-full rounded-lg" />
-              </SwiperSlide>
-            ))}
+            {dataProductDetail &&
+              dataProductDetail.images.map((src, index) => (
+                <SwiperSlide key={index}>
+                  <img src={src} alt="Laptop" className="w-full rounded-lg" />
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
 
         {/* Right: Details */}
         <div className="col-span-5">
           <h1 className="text-xl font-bold text-gray-800">
-            [Like New] Dell Precision 15 5560 (Core i7-11800H, 16GB, 1TB, Nvidia
-            Quadro A2000, 15.6'' FHD+)
+            <span className="capitalize">
+              {`[${dataProductDetail && dataProductDetail.status}]`}{" "}
+            </span>
+            <span>
+              {dataProductDetail && dataProductDetail.product_id.name}{" "}
+            </span>
+            <span>{dataProductDetail && dataProductDetail.year} </span>
+            <span>{dataProductDetail && dataProductDetail.name}</span>
           </h1>
-          <p className="text-red-600 text-2xl font-bold">22.990.000₫</p>
+          <p className="text-red-600 text-2xl font-bold">
+            {formatCurrency(dataProductDetail && dataProductDetail.price)}
+          </p>
           <p className="line-through text-gray-500">25.990.000₫</p>
           <p>
             <span className="font-bold">Bảo hành:</span> 12 tháng LaptopAZ
@@ -91,34 +121,31 @@ const ProductDetail = () => {
             </a>
 
             <h2 className="font-bold mt-2">CẤU HÌNH:</h2>
-
             <div className="grid md:grid-cols-2 gap-3 mt-3 max-sm:grid-cols-2">
-              {configurations.map((config) => (
-                <div
-                  key={config.id}
-                  className={`border rounded-lg p-3 flex items-start gap-2 cursor-pointer ${
-                    selectedConfig === config.id ? "border-blue-500" : ""
-                  }`}
-                  onClick={() => setSelectedConfig(config.id)}
-                >
-                  <div className="flex-shrink-0">
-                    {selectedConfig === config.id ? (
-                      <FaCheckCircle className="text-green-500 text-lg" />
-                    ) : (
-                      <div className="w-4 h-4 border border-gray-400 rounded-full"></div>
-                    )}
+              {dataProductDetailBySeries &&
+                dataProductDetailBySeries.map((config) => (
+                  <div
+                    key={config.id}
+                    className={`border rounded-lg p-3 flex items-start gap-2 cursor-pointer ${
+                      selectedConfig === config._id ? "border-blue-500" : ""
+                    }`}
+                    onClick={() => navigation(`/product/${config.slug}`)}
+                  >
+                    <div className="flex-shrink-0">
+                      {selectedConfig === config._id ? (
+                        <FaCheckCircle className="text-green-500 text-lg" />
+                      ) : (
+                        <div className="w-4 h-4 border border-gray-400 rounded-full"></div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[13px] text-gray-700">{config.name}</p>
+                      <p className="text-red-600 font-medium text-sm">
+                        {config.price}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[13px] text-gray-700">
-                      {config.cpu},{config.gpu}
-                    </p>
-                    {/* <p className="text-sm text-gray-700"></p> */}
-                    <p className="text-red-600 font-medium text-sm">
-                      {config.price}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
           {/* Gifts */}
@@ -152,7 +179,10 @@ const ProductDetail = () => {
 
           {/* Buttons */}
           <div className="mt-4 flex gap-4">
-            <button className="bg-red-600 text-white px-6 py-2 rounded-md font-bold shadow-md hover:bg-red-700">
+            <button
+              onClick={() => addToCart()}
+              className="bg-red-600 text-white px-6 py-2 rounded-md font-bold shadow-md hover:bg-red-700"
+            >
               Mua ngay
             </button>
             <button className="bg-blue-600 text-white px-6 py-2 rounded-md font-bold shadow-md hover:bg-blue-700">
@@ -195,7 +225,7 @@ const ProductDetail = () => {
             </p>
             <p className="flex items-center mt-2">
               <FaEnvelope className="text-blue-600 mr-2" />{" "}
-               contact@computerworld.com
+              contact@computerworld.com
             </p>
           </div>
 
@@ -205,13 +235,13 @@ const ProductDetail = () => {
               <AiFillLike className=" inline" /> Thích 43K
             </button>
             <button className=" bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-700">
-               Chia sẻ
+              Chia sẻ
             </button>
           </div>
         </div>
       </div>
       {/* Description */}
-      <DescriptionProduct/>
+      <DescriptionProduct data={dataProductDetail} />
     </div>
   );
 };

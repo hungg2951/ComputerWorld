@@ -1,7 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalProductDetail from "../../../../components/modalProductDetail";
-const DescriptionProduct = () => {
-  const [onOpenModalProductdetail, setOnOpenModalProductdetail] = useState(false);
+const HtmlRenderer = ({ content }) => {
+  return <div dangerouslySetInnerHTML={{ __html: content }} />;
+};
+const DescriptionProduct = ({ data }) => {
+  const [onOpenModalProductdetail, setOnOpenModalProductdetail] =
+    useState(false);
+    const [desc, setDesc] = useState();
+    useEffect(() => {
+      if(data && data.description){
+        setDesc(data.description)
+      }
+      else{
+        setDesc("")
+      }
+    }, [data]);
   const showModal = () => {
     setOnOpenModalProductdetail(true);
   };
@@ -10,43 +23,7 @@ const DescriptionProduct = () => {
       <div className="max-w-full mx-auto flex flex-col lg:flex-row gap-6 mt-10 max-sm:width-full">
         {/* Phần mô tả laptop */}
         <div className="lg:w-2/3 bg-white p-4 shadow-md rounded-lg">
-          <h2 className="text-lg font-semibold border-b pb-2">
-            Đặc điểm nổi bật
-          </h2>
-          <h3 className="text-xl font-bold mt-3">
-            Laptop <span className="text-blue-600">Dell</span> Precision 15 5560
-            hướng đến đối tượng nào?
-          </h3>
-
-          <div className="my-4">
-            <img
-              src="https://example.com/laptop1.jpg"
-              alt="Dell Precision 15 5560"
-              className="w-full rounded-lg"
-            />
-          </div>
-
-          <p className="text-gray-700">
-            <span className="text-blue-600 font-semibold">Dell</span> đã gây ấn
-            tượng mạnh tới đa số người sử dụng khi cho ra mắt
-            <span className="text-blue-600"> Dell Precision 5560</span>. Với
-            ngoại hình thanh lịch, sang trọng được khoác lên một chiếc laptop
-            workstation thực thụ, đó chính là ấn tượng lớn nhất của mẫu laptop
-            siêu hot này. Ngoài ra,
-            <span className="text-blue-600 font-semibold"> Dell</span> cũng rất
-            chăm chút cải tiến hiệu suất hoạt động của chiếc laptop này. Sau đây
-            hãy cùng{" "}
-            <span className="text-blue-600 font-semibold">LaptopAZ</span> tìm
-            hiểu về chiếc laptop cực kỳ ấn tượng này nhé.
-          </p>
-
-          <div className="my-4">
-            <img
-              src="https://example.com/laptop2.jpg"
-              alt="Dell Precision 15 5560 Back"
-              className="w-full rounded-lg"
-            />
-          </div>
+        <HtmlRenderer content={desc}/>
         </div>
 
         {/* Phần thông số kỹ thuật */}
@@ -122,7 +99,10 @@ const DescriptionProduct = () => {
           </table>
 
           {/* Nút xem thêm */}
-          <button onClick={showModal} className="w-full mt-4 p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
+          <button
+            onClick={showModal}
+            className="w-full mt-4 p-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition"
+          >
             Xem cấu hình chi tiết
           </button>
         </div>
@@ -130,7 +110,11 @@ const DescriptionProduct = () => {
       {/* popup */}
       <div className="flex justify-center items-center ">
         {/* Modal Popup */}
-        <ModalProductDetail onClose = {()=>setOnOpenModalProductdetail(false)} visible = {onOpenModalProductdetail}/>
+        <ModalProductDetail
+          onClose={() => setOnOpenModalProductdetail(false)}
+          visible={onOpenModalProductdetail}
+          data={data}
+        />
       </div>
     </>
   );
