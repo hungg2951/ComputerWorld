@@ -14,6 +14,8 @@ import {
   getOneProductDetailBySeries,
 } from "../../../redux/slice/productDetailSlice";
 import { formatCurrency } from "../../../ultis/formatnumber";
+import { toast } from "react-toastify";
+import { addToCart } from "../../../ultis/cart";
 
 const ProductDetail = () => {
   const [selectedConfig, setSelectedConfig] = useState();
@@ -50,26 +52,7 @@ const ProductDetail = () => {
     }
   }, [dataProductDetail]);
 
-  const addToCart = () => {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-    const existingProductIndex = cart.findIndex(
-      (item) => item._id === dataProductDetail._id
-    );
-
-    if (existingProductIndex !== -1) {
-      // Nếu có, tăng số lượng
-      cart[existingProductIndex].quantity += 1;
-    } else {
-      // Nếu chưa, thêm sản phẩm mới vào giỏ hàng
-      cart.push({ ...dataProductDetail, quantity: 1 });
-    }
-
-    // Lưu lại vào localStorage
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Sản phẩm đã được thêm vào giỏ hàng!");
-  };
+  if (!dataProductDetail) return null;
   return (
     <div className=" p-4 mt-28 max-w-[1220px] mx-auto">
       {/* Product Info */}
@@ -141,7 +124,7 @@ const ProductDetail = () => {
                     <div>
                       <p className="text-[13px] text-gray-700">{config.name}</p>
                       <p className="text-red-600 font-medium text-sm">
-                        {config.price}
+                        {formatCurrency(config.price)}
                       </p>
                     </div>
                   </div>
@@ -180,7 +163,10 @@ const ProductDetail = () => {
           {/* Buttons */}
           <div className="mt-4 flex gap-4">
             <button
-              onClick={() => addToCart()}
+              onClick={() => {
+                navigation("/cart");
+                addToCart(dataProductDetail);
+              }}
               className="bg-red-600 text-white px-6 py-2 rounded-md font-bold shadow-md hover:bg-red-700"
             >
               Mua ngay

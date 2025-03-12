@@ -17,7 +17,8 @@ const Products = () => {
     dispatch(getAllProductDetail())
       .unwrap()
       .then((res) => {
-        setDataProductDetails(res.productDetail);
+        res = res.productDetail.filter((item) => item.stock > 0);
+        setDataProductDetails(res);
       })
       .catch((e) => {
         console.log(e);
@@ -101,7 +102,9 @@ const Products = () => {
                         WebkitBoxOrient: "vertical",
                       }}
                     >
-                      <span className="capitalize">{`[${product.status}]`} </span>
+                      <span className="capitalize">
+                        {`[${product.status}]`}{" "}
+                      </span>
                       <span>{product.product_id.name} </span>
                       <span>{product.year} </span>
                       <span>{product.name}</span>
