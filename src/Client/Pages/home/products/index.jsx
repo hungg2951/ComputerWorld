@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -6,52 +6,24 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-const products = [
-  {
-    id: 1,
-    image: "https://laptopaz.vn/media/product/250_3147_legion_y7000p_2024.jpg",
-    title:
-      "[Like New] Dell Precision 15 5560 (Core i7-11800H, 16GB, 1TB, Nvidia Quadro A2000, 15.6",
-    discount: "-17%",
-    price: "29.890.000",
-    oldPrice: "35.890.000",
-  },
-  {
-    id: 2,
-    image: "https://laptopaz.vn/media/product/250_3370_legion_5_2024.jpg",
-    title: "Laptop 2",
-    discount: "-14%",
-    price: "38.590.000",
-    oldPrice: "44.990.000",
-  },
-  {
-    id: 3,
-    image: "https://laptopaz.vn/media/product/250_3443_",
-    title: "Laptop 3",
-    discount: "-14%",
-    price: "37.890.000",
-    oldPrice: "43.990.000",
-  },
-  {
-    id: 4,
-    image:
-      "https://laptopaz.vn/media/product/250_3407_3359_acer_nitro_v_15_anv15_51.jpg",
-    title: "Laptop 4",
-    discount: "-10%",
-    price: "19.490.000",
-    oldPrice: "22.990.000",
-  },
-  {
-    id: 5,
-    image:
-      "https://laptopaz.vn/media/product/250_3407_3359_acer_nitro_v_15_anv15_51.jpg",
-    title: "Laptop 4",
-    discount: "-10%",
-    price: "19.490.000",
-    oldPrice: "22.990.000",
-  },
-];
+import { useDispatch } from "react-redux";
+import { getAllProductDetail } from "../../../../redux/slice/productDetailSlice";
+import { formatCurrency } from "../../../../ultis/formatnumber";
+
 const Products = () => {
+  const [dataProductDetails, setDataProductDetails] = useState([]);
+  console.log("🚀 ~ dataProductDetails:", dataProductDetails);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAllProductDetail())
+      .unwrap()
+      .then((res) => {
+        setDataProductDetails(res.productDetail);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
   return (
     <>
       <div className="container mx-auto mt-10">
@@ -108,44 +80,47 @@ const Products = () => {
           }}
           className="w-full"
         >
-          {products.map((product) => (
-            <SwiperSlide key={product.id}>
-              <NavLink to={"/product/1"}>
-                <div className="relative border p-4 rounded-lg shadow-md bg-white h-80">
-                  {product.discount && (
-                    <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs md:text-sm font-semibold rounded-full">
-                      {product.discount}
-                    </span>
-                  )}
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="w-full h-40 md:h-48 lg:h-52 object-cover rounded-md"
-                  />
-                  <h3
-                    className="text-center mt-2 text-[13px] text-[#333] overflow-hidden"
-                    style={{
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                    }}
-                  >
-                    {product.title}
-                  </h3>
-                  <div className="flex items-center justify-center gap-2">
-                    <p className="text-center text-red-600 font-medium text-base md:text-lg">
-                      {product.price}
-                    </p>
-                    {product.oldPrice && (
-                      <p className="text-center text-gray-500 line-through text-sm md:text-base">
-                        {product.oldPrice}
-                      </p>
+          {dataProductDetails &&
+            dataProductDetails.map((product) => (
+              <SwiperSlide key={product.id}>
+                <NavLink to={`/product/`}>
+                  <div className="relative border p-4 rounded-lg shadow-md bg-white h-80">
+                    {product.discount && (
+                      <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs md:text-sm font-semibold rounded-full">
+                        {product.discount}
+                      </span>
                     )}
+                    <img
+                      src={product.product_id.image}
+                      className="w-full h-40 md:h-48 lg:h-52 object-cover rounded-md"
+                    />
+                    <h3
+                      className="text-center mt-2 text-[13px] text-[#333] overflow-hidden"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
+                      <span className="capitalize">{`[${product.status}]`} </span>
+                      <span>{product.product_id.name} </span>
+                      <span>{product.year} </span>
+                      <span>{product.name}</span>
+                    </h3>
+                    <div className="flex items-center justify-center gap-2">
+                      <p className="text-center text-red-600 font-medium text-base md:text-lg">
+                        {formatCurrency(product.price)}
+                      </p>
+                      {product.oldPrice && (
+                        <p className="text-center text-gray-500 line-through text-sm md:text-base">
+                          {product.oldPrice}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </NavLink>
-            </SwiperSlide>
-          ))}
+                </NavLink>
+              </SwiperSlide>
+            ))}
         </Swiper>
       </div>
     </>

@@ -37,9 +37,9 @@ export const getAllProductDetail = createAsyncThunk(
 
 export const getOneProductDetail = createAsyncThunk(
   "product-detail/getOne",
-  async (id, { rejectWithValue }) => {
+  async (slug, { rejectWithValue }) => {
     try {
-      const { data } = await productDetailAPI.getOne(id);
+      const { data } = await productDetailAPI.getOne(slug);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);

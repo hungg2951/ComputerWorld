@@ -10,6 +10,7 @@ import { createProductDetail } from "../../../redux/slice/productDetailSlice";
 import FormProductDetails from "../../../components/admin/products/formProductDetails";
 import { getAllData } from "../../../redux/slice/laptopTypeSlice";
 import { getAllBrands } from "../../../redux/slice/brandSlice";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 const CreateProductPage = () => {
@@ -76,6 +77,7 @@ const CreateProductPage = () => {
           return message.warning("Không lấy được dữ liệu từ form");
         }
         values.product_details.map((item) => {
+          item.year = dayjs(item.year).format("YYYY");
           dispatch(
             createProductDetail({ ...item, product_id: res.product._id })
           )
@@ -85,6 +87,7 @@ const CreateProductPage = () => {
               form.resetFields(); //reset form sau khi thành công
             })
             .catch((e) => {
+              message.error(e.message);
               console.log(e);
             })
             .finally(() => setLoading(false));
@@ -113,7 +116,7 @@ const CreateProductPage = () => {
 
           {/* Input nhập tên sản phẩm */}
           <Form.Item
-            label="Tên sản phẩm"
+            label="Tên rút gọn sản phẩm"
             name="name"
             rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
           >
@@ -125,7 +128,10 @@ const CreateProductPage = () => {
             label="Thương hiệu"
             name="brand_id"
             rules={[
-              { required: true, message: "Vui lòng chọn thương hiệu sản phẩm!" },
+              {
+                required: true,
+                message: "Vui lòng chọn thương hiệu sản phẩm!",
+              },
             ]}
           >
             <Select placeholder="Chọn thương hiệu">
@@ -162,9 +168,7 @@ const CreateProductPage = () => {
           <Form.Item
             label="Loại Laptop"
             name="type_id"
-            rules={[
-              { required: true, message: "Vui lòng chọn loại laptop!" },
-            ]}
+            rules={[{ required: true, message: "Vui lòng chọn loại laptop!" }]}
           >
             <Select placeholder="Chọn loại laptop">
               {Array.isArray(dataLaptopTypes) && dataLaptopTypes.length !== 0

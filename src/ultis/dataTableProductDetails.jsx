@@ -25,14 +25,10 @@ export const productDetailAttributes = [
     rules: [{ required: true, message: "Không được để trống" }],
   },
   {
-    name: "scanFrequency",
-    placeholder: `Tần số quét (165Hz)`,
-    rules: [{ required: true, message: "Không được để trống" }],
-  },
-  {
     name: "price",
     placeholder: "Giá sản phẩm",
     rules: [
+      { required: true, message: "Không được để trống" },
       { pattern: /^[0-9]+$/, message: "Sai định dạng vui lòng nhập số!" },
     ],
   },

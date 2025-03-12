@@ -14,10 +14,10 @@ const CreateDescription = () => {
   const dispatch = useDispatch();
   const [data, setData] = useState();
   console.log("🚀 ~ CreateDescription ~ Data:", data);
-  const { id } = useParams();
+  const { slug } = useParams();
   useEffect(() => {
-    if (id) {
-      dispatch(getOneProductDetail(id))
+    if (slug) {
+      dispatch(getOneProductDetail(slug))
         .unwrap()
         .then((res) => {
           setData(res.data);
@@ -26,15 +26,15 @@ const CreateDescription = () => {
           console.log(e);
         });
     }
-  }, [id]);
+  }, [slug]);
   useEffect(()=>{
     if(data){
         form.setFieldsValue(data);
     }
   },[data])
   const onFinish = async (values) => {
-    if (!id) return null;
-    dispatch(updateProductDetail({ ...values, id: id }))
+    if (!slug) return null;
+    dispatch(updateProductDetail({ ...values, id: data._id }))
       .unwrap()
       .then(() => {
         toast.success("Cập nhật mô tả thành công");

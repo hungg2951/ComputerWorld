@@ -31,7 +31,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
           return message.warning("Không lấy được dữ liệu từ form");
         }
         values.product_details.map((item) => {
-          item.year ? (item.year = dayjs(item.year).format("YYYY")) : null;
+          item.year = dayjs(item.year).format("YYYY");
           dispatch(
             createProductDetail({
               ...item,
@@ -46,7 +46,7 @@ const ModelCreateProductDetails = ({ visible, onClose, dataProduct }) => {
             })
             .catch((e) => {
               console.log(e);
-              message.warning("Lỗi khi thêm cấu hình!");
+              message.warning(e.message);
             })
             .finally(() => setLoading(false));
         });

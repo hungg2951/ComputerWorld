@@ -162,6 +162,14 @@ const List = ({ change }) => {
       ...getColumnSearchProps("name"),
     },
     {
+      title: "Brand",
+      dataIndex: "brand_id",
+      key: "brand_id",
+      ...getColumnSearchProps("name"),
+      render:(item)=><div>{item?item.name:""}</div>,
+      // sorter: (a, b) => a.name - b.name
+    },
+    {
       title: "Hành động",
       key: "name",
       render: (item, record, index) => (

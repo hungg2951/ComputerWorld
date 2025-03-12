@@ -87,7 +87,6 @@ const Update = ({ visible, onClose, dataProduct, OnChangeEditProduct }) => {
       }
     }
   }, [dataProduct]);
-  console.log(dataProduct);
 
   return (
     <div>

@@ -13,7 +13,7 @@ export const productDetailAPI = {
     getByProduct(id_product){
         return instance.get(`product-detail-by-product/${id_product}`)
     },
-    getOne(id){
-        return instance.get(`product-detail/${id}`)
+    getOne(slug){
+        return instance.get(`product-detail/${slug}`)
     }
 }

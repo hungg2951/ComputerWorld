@@ -55,7 +55,7 @@ const RoutePrivate = [
             element: <ProductDetailsByProduct />,
           },
           {
-            path: "product-detail/:id",
+            path: "product-detail/:slug",
             element: <CreateDescription />,
           },
         ],

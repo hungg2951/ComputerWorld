@@ -18,7 +18,7 @@ const ProductDetailsByProduct = () => {
   const [onModalUpDate, setOnModalUpDate] = useState(false);
   const [onChangeData, setonChangeData] = useState(false);
   const dispatch = useDispatch();
-  const navigation = useNavigate()
+  const navigation = useNavigate();
   const changeData = () => {
     setonChangeData(!onChangeData);
   };
@@ -63,10 +63,10 @@ const ProductDetailsByProduct = () => {
       key: "name",
       render: (item, record, index) => (
         <div key={index}>
-          {(product.name ? product.name : "") +
-            " " +
-            (record.year ? record.year : " ") +
-            (item.name ? item.name : "")}
+          <span className="capitalize">{`[${record.status ? record.status : ""}]`} </span>
+          <span>{product.name ? product.name : ""}</span>
+          <span> {record.year ? record.year : " "} </span>
+          <span>{item.name ? item.name : ""}</span>
         </div>
       ),
     },
@@ -117,7 +117,11 @@ const ProductDetailsByProduct = () => {
             </Button>
           </div>
           <div>
-            <Button onClick={() =>navigation(`/admin/product-detail/${record._id}`)}>Mô tả</Button>
+            <Button
+              onClick={() => navigation(`/admin/product-detail/${record.slug}`)}
+            >
+              Mô tả
+            </Button>
           </div>
           <div>
             <Button
