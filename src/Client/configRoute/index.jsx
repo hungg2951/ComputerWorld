@@ -4,6 +4,7 @@ import Cart from "../Pages/cart";
 import InformationCustomer from "../Pages/payment";
 import LayoutClient from "../Layouts";
 import TestRedux from "../Pages/test";
+import Checkout from "../Pages/checkout";
 
 const RoutePublic = [
   {
@@ -25,6 +26,10 @@ const RoutePublic = [
       {
         path: "payment",
         element: <InformationCustomer />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
       },
       
     ],

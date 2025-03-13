@@ -13,7 +13,9 @@ const Cart = () => {
   const [dataCart, setDataCart] = useState([]);
 
   const Payment = () => {
-    navigation("/payment");
+    navigation("/payment", {
+      state: { cart: dataCart, totalPrice: getTotalPrice() },
+    });
   };
   let cart = getItemLocalStorage("cart");
   useEffect(() => {
