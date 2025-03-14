@@ -46,6 +46,18 @@ export const updateOrder= createAsyncThunk(
     }
   }
 )
+
+export const getOrderId= createAsyncThunk(
+  "order/getOneByOrderId",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await OrderAPI.getOrderId(id);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)
 ////
 const initialState = {
   orders: [],

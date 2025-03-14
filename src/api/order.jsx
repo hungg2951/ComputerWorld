@@ -7,6 +7,9 @@ export const OrderAPI ={
     getOne(id){
         return  instance.get(`order/${id}`)
     },
+    getOrderId(id){
+        return  instance.get(`orderId/${id}`)
+    },
     create(data){
         return instance.post('order',data)
     },

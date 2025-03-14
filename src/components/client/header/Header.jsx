@@ -46,7 +46,7 @@ const HeaderClient = () => {
                   <NavLink to="#">Build PC</NavLink>
                 </li>
                 <li>
-                  <NavLink to="#">Màn hình</NavLink>
+                  <NavLink to="/orders">Đơn hàng</NavLink>
                 </li>
               </ul>
             </nav>
