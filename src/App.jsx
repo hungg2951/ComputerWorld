@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 import RootRoutes from "./Routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoadingPage from "./components/loading";
 function App() {
   const { pathname } = useLocation();
 
@@ -14,7 +13,6 @@ function App() {
 
   return (
     <div className="relative">
-      <LoadingPage />
       <RootRoutes />
       <ToastContainer
         position="top-right"

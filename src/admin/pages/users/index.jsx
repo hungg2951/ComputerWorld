@@ -4,7 +4,6 @@ import { Button, Input, Select, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { useDispatch } from "react-redux";
 import { userGetAll, userUpdate } from "../../../redux/slice/userSlice";
-import { hiddenLoading, showLoading } from "../../../redux/slice/loadingSlice";
 import { toast } from "react-toastify";
 
 const ListUsers = () => {
@@ -129,29 +128,31 @@ const ListUsers = () => {
   });
   const { Option } = Select;
 
-  const handleChange = (value,option) => {
-    // return console.log(value,option.extra);
-    
-    dispatch(userUpdate({status:value,id:option.extra})).unwrap()
-    .then(()=>{
-      toast.success("Thành công")
-    })
-    .catch((e)=>{
-      console.log(e);
-    })
+  const handleChange = (value, option) => {
+    dispatch(userUpdate({ status: value, id: option.extra }))
+      .unwrap()
+      .then(() => {
+        toast.success("Thành công");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
   useEffect(() => {
-    dispatch(showLoading());
     dispatch(userGetAll())
       .then((res) => {
         setUsers(res.payload);
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => dispatch(hiddenLoading()));
+      });
   }, []);
   const columns = [
+    {
+      title: "STT",
+      key: "name",
+      render: (item, record, index) => <div>{index + 1}</div>,
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -159,6 +160,7 @@ const ListUsers = () => {
       width: "30%",
       ...getColumnSearchProps("name"),
     },
+
     {
       title: "Age",
       dataIndex: "age",
@@ -186,18 +188,20 @@ const ListUsers = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      ...getColumnSearchProps("status"),
-      sorter: (a, b) => a.status.length - b.status.length,
       render: (item, record, index) => {
         return (
           <div>
             <Select
               defaultValue={item}
               style={{ width: 150 }}
-              onChange={(value,option)=>handleChange(value,option)}
+              onChange={(value, option) => handleChange(value, option)}
             >
-              <Option value={true} extra = {record._id}>Đang hoạt động</Option>
-              <Option value={false} extra = {record._id}>Vô hiệu hóa</Option>
+              <Option value={true} extra={record._id}>
+                Đang hoạt động
+              </Option>
+              <Option value={false} extra={record._id}>
+                Vô hiệu hóa
+              </Option>
             </Select>
           </div>
         );

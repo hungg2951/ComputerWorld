@@ -3,12 +3,14 @@ import BrandPage from "../pages/brand";
 import Dashboard from "../pages/dashboard";
 import LaptopSerisPage from "../pages/laptopSeris";
 import LaptopType from "../pages/laptopType";
+import OrdersPage from "../pages/orders";
 import ProductAdminPage from "../pages/products";
 import CreateProductPage from "../pages/products/create";
 import ProductDetailsByProduct from "../pages/products/productDetails";
 import CreateDescription from "../pages/products/productDetails/createDesc";
 import ListUsers from "../pages/users";
 import ProtectedRoute from "../ProtectedRoute";
+import Setting from './../pages/setting/index';
 
 const RoutePrivate = [
   {
@@ -57,6 +59,14 @@ const RoutePrivate = [
           {
             path: "product-detail/:slug",
             element: <CreateDescription />,
+          },
+          {
+            path: "orders",
+            element: <OrdersPage />,
+          },
+          {
+            path: "setting",
+            element: <Setting />,
           },
         ],
       },
