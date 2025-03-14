@@ -1,14 +1,11 @@
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import { Card, Input, Button, message } from "antd";
+import { Card, Button } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 const Checkout = () => {
   const [searchParams] = useSearchParams();
   const allParams = Object.fromEntries([...searchParams]);
-  console.log("🚀 ~ Checkout ~ allParams:", allParams);
   const [copied, setCopied] = useState(false);
-  if (allParams.resultCode === "0") console.log("Đã thanh toán");
-  if (allParams.resultCode !== "0") console.log("Chưa thanh toán");
   const copyToClipboard = () => {
     navigator.clipboard.writeText(allParams.orderId);
     setCopied(true);

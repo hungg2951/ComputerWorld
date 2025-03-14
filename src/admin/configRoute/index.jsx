@@ -4,6 +4,7 @@ import Dashboard from "../pages/dashboard";
 import LaptopSerisPage from "../pages/laptopSeris";
 import LaptopType from "../pages/laptopType";
 import OrdersPage from "../pages/orders";
+import OrderDetails from "../pages/orders/orderDetails";
 import ProductAdminPage from "../pages/products";
 import CreateProductPage from "../pages/products/create";
 import ProductDetailsByProduct from "../pages/products/productDetails";
@@ -67,6 +68,10 @@ const RoutePrivate = [
           {
             path: "setting",
             element: <Setting />,
+          },
+          {
+            path: "order-details",
+            element: <OrderDetails />,
           },
         ],
       },

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Radio, Checkbox, Select, message } from "antd";
+import { Form, Input, Radio, Checkbox, Select } from "antd";
 import ChooseAddress from "./chooseAddress";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserIdFromToken } from "./../../../ultis/isAuthenticated";

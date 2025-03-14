@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { useDispatch } from "react-redux";
 import { getAllOrders, updateOrder } from "./../../../redux/slice/orderSlice";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -15,32 +16,31 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [ordersFilter, setOrdersFilter] = useState([]);
   const [active, setActive] = useState("pending");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllOrders())
       .unwrap()
       .then((res) => {
-        setOrders(res.order);   
-        setOrdersFilter(res.order.filter((item) => item.status === 'pending'));
+        setOrders(res.order);
+        setOrdersFilter(res.order.filter((item) => item.status === "pending"));
       })
       .catch((e) => {
         console.log(e);
       });
   }, []);
 
-  console.log(ordersFilter);
-
-  const refreshDataFilter = (value)=>{
+  const refreshDataFilter = (value) => {
     dispatch(getAllOrders())
       .unwrap()
       .then((res) => {
         setOrders(res.order);
-        setOrdersFilter(res.order.filter((item) => item.status === value));   
+        setOrdersFilter(res.order.filter((item) => item.status === value));
       })
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
   const handleFilterOrders = (value) => {
     // lọc đơn hàng theo trạng thái
     setOrdersFilter(orders.filter((item) => item.status === value));
@@ -66,7 +66,7 @@ const OrdersPage = () => {
               icon: "success",
               title: "Cập nhật trạng thái thành công",
               showConfirmButton: false,
-              timer: 1200
+              timer: 1200,
             });
           })
           .catch((e) => {
@@ -250,7 +250,17 @@ const OrdersPage = () => {
     {
       title: "",
       key: "_id",
-      render: () => <Button>Chi tiết</Button>,
+      render: (value, record, index) => (
+        <Button
+          onClick={() =>
+            navigate("/admin/order-details", {
+              state: { orderId: record.orderId },
+            })
+          }
+        >
+          Chi tiết
+        </Button>
+      ),
     },
   ];
   return (
