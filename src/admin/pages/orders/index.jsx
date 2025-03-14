@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Table, Input, Select, DatePicker, Button, Space } from "antd";
 import dayjs from "dayjs";
+import { useDispatch } from "react-redux";
+import { getAllOrders, updateOrder } from "./../../../redux/slice/orderSlice";
+import Swal from "sweetalert2";
 
 const { Option } = Select;
 
@@ -9,26 +12,69 @@ const OrdersPage = () => {
   const [filterPayment, setFilterPayment] = useState(null);
   const [filterDelivery, setFilterDelivery] = useState(null);
   const [searchDate, setSearchDate] = useState(null);
-  const orders = [
-    {
-      key: "1",
-      orderId: "12345",
-      paymentMethod: "cash",
-      deliveryMethod: "store_pickup",
-      totalAmount: "500,000 VND",
-      orderDate: "2025-03-14T06:32:50.657+00:00",
-      status: "Đang xử lý",
-    },
-    {
-      key: "2",
-      orderId: "67890",
-      paymentMethod: "momo",
-      deliveryMethod: "home_delivery",
-      totalAmount: "1,200,000 VND",
-      orderDate: "2025-03-11T08:15:30.123+00:00",
-      status: "Đã giao hàng",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [ordersFilter, setOrdersFilter] = useState([]);
+  const [active, setActive] = useState("pending");
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAllOrders())
+      .unwrap()
+      .then((res) => {
+        setOrders(res.order);   
+        setOrdersFilter(res.order.filter((item) => item.status === 'pending'));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
+  console.log(ordersFilter);
+
+  const refreshDataFilter = (value)=>{
+    dispatch(getAllOrders())
+      .unwrap()
+      .then((res) => {
+        setOrders(res.order);
+        setOrdersFilter(res.order.filter((item) => item.status === value));   
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+  const handleFilterOrders = (value) => {
+    // lọc đơn hàng theo trạng thái
+    setOrdersFilter(orders.filter((item) => item.status === value));
+  };
+
+  const updateStatus = (values) => {
+    Swal.fire({
+      title: `${values.label} ?`,
+      text: `Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng sang "${values.label}" ?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có, cập nhật!",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(updateOrder(values))
+          .unwrap()
+          .then(() => {
+            refreshDataFilter(values.statusNow);
+            Swal.fire({
+              icon: "success",
+              title: "Cập nhật trạng thái thành công",
+              showConfirmButton: false,
+              timer: 1200
+            });
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+    });
+  };
 
   const handleSearchOrderId = (value) => {
     setSearchOrderId(value);
@@ -46,10 +92,10 @@ const OrdersPage = () => {
     setSearchDate(date ? dayjs(date).startOf("day") : null);
   };
 
-  const filteredOrders = orders.filter((order) => {
+  const filteredOrders = ordersFilter.filter((order) => {
     return (
       (searchOrderId ? order.orderId.includes(searchOrderId) : true) &&
-      (filterPayment ? order.paymentMethod === filterPayment : true) &&
+      (filterPayment ? order.payment_method === filterPayment : true) &&
       (filterDelivery ? order.deliveryMethod === filterDelivery : true) &&
       (searchDate ? dayjs(order.orderDate).isSame(searchDate, "day") : true)
     );
@@ -63,13 +109,20 @@ const OrdersPage = () => {
     },
     {
       title: "Phương thức thanh toán",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
+      dataIndex: "payment_method",
+      key: "payment_method",
       filters: [
         { text: "Tiền mặt", value: "cash" },
         { text: "MoMo", value: "momo" },
       ],
-      onFilter: (value, record) => record.paymentMethod === value,
+      onFilter: (value, record) => record.payment_method === value,
+      render: (value, record, index) => (
+        <div>
+          {value === "momo"
+            ? "Thanh toán qua MOMO"
+            : "Thanh toán khi nhận hàng"}
+        </div>
+      ),
     },
     {
       title: "Phương thức nhận hàng",
@@ -80,22 +133,124 @@ const OrdersPage = () => {
         { text: "Giao tận nhà", value: "home_delivery" },
       ],
       onFilter: (value, record) => record.deliveryMethod === value,
+      render: (value, record, index) => (
+        <div>
+          {value === "store_pickup" ? "Nhận tại cửa hàng" : "Giao hàng tận nhà"}
+        </div>
+      ),
     },
     {
       title: "Tổng tiền",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
+      dataIndex: "total_price",
+      key: "total_price",
+      render: (value, record, index) => (
+        <div className="text-red-500">{value.toLocaleString()}</div>
+      ),
     },
     {
       title: "Ngày đặt hàng",
       dataIndex: "orderDate",
       key: "orderDate",
-      render: (date) => dayjs(date).format("YYYY-MM-DD"),
+      render: (date) => dayjs(date).format("DD/MM/YYYY"),
     },
     {
-      title: "Trạng thái đơn hàng",
+      title: "Cập nhật đơn hàng",
       dataIndex: "status",
       key: "status",
+      render: (value, record, index) => (
+        <div>
+          <div>
+            {value === "pending" ? (
+              <Button
+                onClick={() =>
+                  updateStatus({
+                    id: record._id,
+                    status: "confirmed",
+                    label: "Xác nhận đơn hàng",
+                    statusNow: "pending",
+                  })
+                }
+              >
+                Xác nhận đơn hàng
+              </Button>
+            ) : value === "confirmed" ? (
+              <Button
+                onClick={() =>
+                  updateStatus({
+                    id: record._id,
+                    status: "shipped",
+                    label: "Chuyển hàng",
+                    statusNow: "confirmed",
+                  })
+                }
+              >
+                Chuyển hàng
+              </Button>
+            ) : value === "shipped" ? (
+              <Button
+                onClick={() =>
+                  updateStatus({
+                    id: record._id,
+                    status: "delivery",
+                    label: "Giao hàng",
+                    statusNow: "shipped",
+                  })
+                }
+              >
+                Đang giao hàng
+              </Button>
+            ) : value === "delivery" ? (
+              <div className="flex gap-1">
+                <Button
+                  onClick={() =>
+                    updateStatus({
+                      id: record._id,
+                      status: "success",
+                      label: "Giao hàng thành công",
+                      statusNow: "delivery",
+                    })
+                  }
+                >
+                  Giao thành công
+                </Button>
+                <Button
+                  onClick={() =>
+                    updateStatus({
+                      id: record._id,
+                      status: "returned",
+                      label: "Hoàn đơn",
+                      statusNow: "delivery",
+                    })
+                  }
+                >
+                  Hoàn đơn
+                </Button>
+              </div>
+            ) : value === "success" ? (
+              "Giao hàng thành công"
+            ) : value === "cancel" ? (
+              <Button
+                onClick={() =>
+                  updateStatus({
+                    id: record._id,
+                    status: "confirmed",
+                    statusNow: "cancel",
+                  })
+                }
+              >
+                Xác nhận lại đơn hàng
+              </Button>
+            ) : (
+              "Đơn hàng hoàn lại"
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "",
+      key: "_id",
+      render: () => <Button>Chi tiết</Button>,
     },
   ];
   return (
@@ -131,6 +286,75 @@ const OrdersPage = () => {
           allowClear
         />
       </Space>
+      {/*  */}
+      <Space style={{ marginBottom: 16 }}>
+        <Button
+          type={active === "pending" ? "primary" : "default"}
+          onClick={() => {
+            setActive("pending");
+            handleFilterOrders("pending");
+          }}
+        >
+          Đơn chưa xác nhận
+        </Button>
+        <Button
+          type={active === "confirmed" ? "primary" : "default"}
+          onClick={() => {
+            setActive("confirmed");
+            handleFilterOrders("confirmed");
+          }}
+        >
+          Đơn đã xác nhận
+        </Button>
+        <Button
+          type={active === "shipped" ? "primary" : "default"}
+          onClick={() => {
+            setActive("shipped");
+            handleFilterOrders("shipped");
+          }}
+        >
+          Đơn đã chuyển hàng
+        </Button>
+        <Button
+          type={active === "delivery" ? "primary" : "default"}
+          onClick={() => {
+            setActive("delivery");
+            handleFilterOrders("delivery");
+          }}
+        >
+          Đơn đang giao hàng
+        </Button>
+        <Button
+          type={active === "success" ? "primary" : "default"}
+          onClick={() => {
+            setActive("success");
+            handleFilterOrders("success");
+          }}
+        >
+          Đơn đã giao
+        </Button>
+        <Button
+          danger
+          type={active === "cancel" ? "primary" : "default"}
+          onClick={() => {
+            setActive("cancel");
+            handleFilterOrders("cancel");
+          }}
+        >
+          Đơn đã hủy
+        </Button>
+        <Button
+          danger
+          type={active === "returned" ? "primary" : "default"}
+          onClick={() => {
+            setActive("returned");
+            handleFilterOrders("returned");
+          }}
+        >
+          Đơn hoàn lại
+        </Button>
+      </Space>
+      {/*  */}
       <Table columns={columns} dataSource={filteredOrders} />
     </div>
   );
