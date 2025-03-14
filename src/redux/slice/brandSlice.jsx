@@ -47,7 +47,7 @@ export const brandSlice = createSlice({
     //getAll
     builder
       .addCase(getAllBrands.fulfilled, (state, { payload }) => {
-        state.laptopType = payload;
+        state.brands = payload;
       })
   },
 });

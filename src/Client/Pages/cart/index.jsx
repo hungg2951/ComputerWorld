@@ -4,6 +4,7 @@ import { FaGift } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getItemLocalStorage } from "../../../ultis/getItemLocalStore";
 import Swal from "sweetalert2";
+import { Button } from "antd";
 
 const Cart = () => {
   const price = 13990000;
@@ -77,6 +78,15 @@ const Cart = () => {
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
+  if (!dataCart || dataCart.length === 0)
+    return (
+      <div className="min-h-80 flex justify-center items-center text-xl">
+        <div>
+          <h1 className="font-bold">Giỏ hàng của bạn đang rỗng</h1>
+          <Button onClick={()=>navigation('/')} className="w-full">Tiếp tục mua sắm</Button>
+        </div>
+      </div>
+    );
   return (
     <>
       <div className="p-4 md:p-8 min-h-screen mt-20 max-w-[1220px] mx-auto max-sm:w-full max-sm:p-0">
@@ -86,8 +96,11 @@ const Cart = () => {
               <input type="checkbox" className="mr-2" /> Chọn tất cả (1)
             </h2>
             {dataCart &&
-              dataCart.map((item) => (
-                <div className="flex flex-col md:flex-row items-start gap-4 mt-4 border-b pb-4">
+              dataCart.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col md:flex-row items-start gap-4 mt-4 border-b pb-4"
+                >
                   <img
                     src={item.product_id ? item.product_id.image : ""}
                     alt="Laptop"

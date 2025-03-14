@@ -4,6 +4,18 @@ export const isAuthenticated = ()=>{
     return localStorage.getItem("token");
 }
 
+export const getUserIdFromToken = () => {
+  const token = localStorage.getItem("token"); // Lấy token từ localStorage
+  if (!token) return null; // Nếu không có token, trả về null
+
+  try {
+    const decoded = jwtDecode(token); // Giải mã token
+    return decoded?._id || null; // Trả về userId nếu có
+  } catch (error) {
+    return null; // Nếu token không hợp lệ
+  }
+};
+
 export const checkToken = () => {
     const token = isAuthenticated()
     if (!token) return false; // Không có token → Không hợp lệ

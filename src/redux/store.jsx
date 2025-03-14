@@ -7,6 +7,8 @@ import brandSlice from "./slice/brandSlice";
 import laptopSerisSlice from "./slice/laptopSerisSlice";
 import productDetailSlice from "./slice/productDetailSlice";
 import productsSlice from "./slice/productSlice";
+import orderSlice from "./slice/orderSlice";
+import orderDetailSlice from "./slice/orderDetailSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +20,7 @@ export const store = configureStore({
     laptopSeris: laptopSerisSlice,
     product: productsSlice,
     productDetail: productDetailSlice,
+    order: orderSlice,
+    orderDetail: orderDetailSlice,
   },
 });

@@ -4,6 +4,13 @@ import ChooseAddress from "./chooseAddress";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getUserIdFromToken } from "./../../../ultis/isAuthenticated";
+import { useDispatch } from "react-redux";
+import {
+  createOrder,
+  createOrderByMomo,
+} from "../../../redux/slice/orderSlice";
+import { createOrderDetail } from "../../../redux/slice/orderDetailSlice";
 
 const { Option } = Select;
 
@@ -17,6 +24,7 @@ const InformationCustomer = () => {
   const [dataCheckout, setDataCheckout] = useState();
   const [messageAddress, setmessageAddress] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   //lọc lại dữ liệu
   useEffect(() => {
@@ -29,15 +37,34 @@ const InformationCustomer = () => {
         total: price * quantity,
       })
     );
-    setDataCheckout(dataFilter)
+    setDataCheckout(dataFilter);
   }, [checkoutCart]);
-  
+
+  const removeUndefinedFields = (obj) => {
+    /// lọc các trường undefined và ""
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== "") {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+  };
+  const removeFields = (obj, fieldsToRemove) =>
+    Object.fromEntries(
+      Object.entries(obj).filter(([key]) => !fieldsToRemove.includes(key))
+    );
   console.log(dataCheckout);
 
   const onSubmit = () => {
+    const user_id = getUserIdFromToken(); // Kiểm tra userId
+
     form
       .validateFields()
       .then((values) => {
+        if (user_id && user_id !== undefined) {
+          values = { ...values, user_id };
+        }
+        values = removeUndefinedFields(values);
         if (toggle) {
           if (address === undefined || values.address === undefined)
             return setmessageAddress("Vui lòng chọn địa chỉ !");
@@ -50,20 +77,96 @@ const InformationCustomer = () => {
             return;
           }
         }
+
         values.address = values.address + "," + address;
+        const informationClient = removeFields(values, [
+          "deliveryMethod",
+          "payment_method",
+          "user_id",
+          "note",
+        ]);
         if (!toggle) {
-          delete values.address;
+          delete informationClient.address;
         }
         if (values.payment_method === "momo") {
           // thanh toán qua momo
-          console.log("🚀thanh toán qua momo:", values);
-          toast.success("Đã thanh toán Đặt hàng qua momo");
+          dispatch(
+            createOrderByMomo({
+              ...values,
+              informationClient,
+              total_price: totalPrice,
+            })
+          )
+            .unwrap()
+            .then((res) => {
+              dataCheckout.map((item) => {
+                dispatch(
+                  createOrderDetail({ ...item, order_id: res.newOrder._id })
+                )
+                  .unwrap()
+                  .then(() => {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Đặt hàng thành công!",
+                      showConfirmButton: false,
+                      timer: 1200,
+                    });
+                    setTimeout(() => {
+                      window.location.href = res.paymentUrl;
+                      localStorage.removeItem("cart");
+                    }, 1500);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
           return;
         }
         if (values.payment_method === "cash") {
+          var orderId = "ComputerWorld" + new Date().getTime();
           // thanh toán khi nhận hàng
-          toast.success("Chưa thanh toán");
-          console.log("🚀 thanh toán sau:", values);
+          dispatch(
+            createOrder({
+              ...values,
+              informationClient,
+              total_price: totalPrice,
+              orderId,
+            })
+          )
+            .unwrap()
+            .then((res) => {
+              console.log(res);
+              
+              dataCheckout.map((item) => {
+                dispatch(
+                  createOrderDetail({ ...item, order_id: res.order._id })
+                )
+                  .unwrap()
+                  .then(() => {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Đặt hàng thành công!",
+                      showConfirmButton: false,
+                      timer: 1200,
+                    });
+                    setTimeout(() => {
+                      navigate(`/checkout?orderId=${res.order.orderId}`);
+                      localStorage.removeItem("cart");
+                    }, 1500);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+
           return;
         }
       })
