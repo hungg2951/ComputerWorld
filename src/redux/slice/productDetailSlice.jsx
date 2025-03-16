@@ -70,6 +70,17 @@ export const getProductDetailByProduct = createAsyncThunk(
     }
   }
 );
+export const searchProductDetail = createAsyncThunk(
+  "product-detail/search",
+  async (query, { rejectWithValue }) => {
+    try {
+      const { data } = await productDetailAPI.search(query);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 //
 const initialState = {
   products_detail: [],

@@ -29,7 +29,7 @@ const LayoutAdmin = () => {
         <div className="demo-logo-vertical">
           <img
             className="w-full m-auto p-2"
-            src="https://inkythuatso.com/uploads/images/2021/12/logo-free-fire-inkythuatso-3-01-04-09-17-28.jpg"
+            src="https://res.cloudinary.com/dnyx3a5yj/image/upload/v1723428544/logo.png"
             alt=""
           />
         </div>

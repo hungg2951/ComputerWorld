@@ -18,5 +18,8 @@ export const productDetailAPI = {
     },
     getBySeries(series_id){
         return instance.get(`product-detail/series/${series_id}`)
+    },
+    search(key){
+        return instance.post("search",key)
     }
 }
