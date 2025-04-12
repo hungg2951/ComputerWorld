@@ -9,6 +9,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import React from "react";
+import { BsTicketPerforatedFill } from "react-icons/bs";
 
 const NavbarAdmin = [
   {
@@ -55,6 +56,12 @@ const NavbarAdmin = [
   },
   {
     key: "8",
+    icon: <BsTicketPerforatedFill />,
+    label: "Mã giảm giá",
+    path: "/admin/vouchers",
+  },
+  {
+    key: "9",
     icon: <SettingFilled />,
     label: "Cài đặt",
     path: "/admin/setting",

@@ -138,8 +138,6 @@ const InformationCustomer = () => {
           )
             .unwrap()
             .then((res) => {
-              console.log(res);
-              
               dataCheckout.map((item) => {
                 dispatch(
                   createOrderDetail({ ...item, order_id: res.order._id })
