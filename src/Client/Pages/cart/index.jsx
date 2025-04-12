@@ -4,18 +4,45 @@ import { FaGift } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getItemLocalStorage } from "../../../ultis/getItemLocalStore";
 import Swal from "sweetalert2";
-import { Button } from "antd";
+import { Button, message } from "antd";
+import { checkToken, getUserIdFromToken } from "../../../ultis/isAuthenticated";
+import { useDispatch } from "react-redux";
+import { applyVoucher } from "../../../redux/slice/voucherSlice";
+import { toast } from "react-toastify";
 
 const Cart = () => {
-  const price = 13990000;
-  const originalPrice = 16490000;
-  const discount = originalPrice - price;
+  const [discount, setDiscount] = useState(0);
   const navigation = useNavigate();
   const [dataCart, setDataCart] = useState([]);
+  const [voucher, setVoucher] = useState("");
+  const [messageVoucher, setMessageVoucher] = useState("");
+  const dispatch = useDispatch()
+  const addVoucher =()=>{
+    if(!voucher || voucher.trim() === "") return toast.warning("Vui lòng nhập mã giảm giá")
+    if (!checkToken()) {
+      Swal.fire({
+        title: "Thông báo",
+        text: "Vui lòng đăng nhập để áp dụng mã giảm giá",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+    dispatch(applyVoucher({code:voucher,userId:getUserIdFromToken(),orderTotal:getTotalPrice()})).unwrap()
+    .then((res)=>{
+      setDiscount(res.discount)
+      setMessageVoucher("")
+      toast.success(res.message)
+    })
+    .catch((e)=>{
+      setDiscount(0)
+      setMessageVoucher(e.message)
+    })
+  }
 
   const Payment = () => {
     navigation("/payment", {
-      state: { cart: dataCart, totalPrice: getTotalPrice() },
+      state: { cart: dataCart, totalPrice: getTotalPrice(), discount },
     });
   };
   let cart = getItemLocalStorage("cart");
@@ -121,7 +148,7 @@ const Cart = () => {
                         {item.price.toLocaleString()}
                       </span>
                       <span className="text-gray-400 line-through">
-                        {originalPrice.toLocaleString()}
+                        
                       </span>
                     </div>
                   </div>
@@ -149,13 +176,15 @@ const Cart = () => {
                   className="w-3/4 text-sm p-2 border border-blue-600 rounded focus:outline-none focus:ring-0"
                   type="text"
                   placeholder="Nhập voucher khuyến mãi"
+                  onChange={(e)=> setVoucher(e.target.value)}
                 />
-                <button className="px-2 border text-sm border-blue-600 rounded hover:bg-blue-600 hover:text-white text-blue-600">
+                
+                <button onClick={()=>addVoucher()} className="px-2 border text-sm border-blue-600 rounded hover:bg-blue-600 hover:text-white text-blue-600">
                   Áp dụng
                 </button>
               </div>
+            <p className="text-red-600 text-sm">{messageVoucher}</p>
             </div>
-
             <div className="mt-6 p-4 rounded-lg">
               <h3 className="text-lg font-semibold mb-2">Thông tin đơn hàng</h3>
               <div className="flex justify-between pb-2 text-sm border-b border-gray-200">
@@ -163,14 +192,14 @@ const Cart = () => {
                 <span>{getTotalPrice().toLocaleString("vi")} đ</span>
               </div>
               <div className="flex justify-between mt-2 text-sm pb-2 border-b border-gray-20">
-                <span>Tổng khuyến mãi</span>
+                <span>Mã giảm giá</span>
                 <span className="text-red-500">
-                  {discount.toLocaleString()} đ
+                  -{discount.toLocaleString()} đ
                 </span>
               </div>
               <div className="flex justify-between mt-2 text-lg font-semibold">
                 <span>Cần thanh toán</span>
-                <span className="text-red-600">{price.toLocaleString()} đ</span>
+                <span className="text-red-600">{(getTotalPrice()-discount).toLocaleString()} đ</span>
               </div>
               <button
                 onClick={() => Payment()}

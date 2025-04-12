@@ -16,6 +16,7 @@ const { Option } = Select;
 const InformationCustomer = () => {
   const location = useLocation();
   const totalPrice = location.state?.totalPrice || 0;
+  const discount = location.state?.discount || 0;
   const checkoutCart = location.state?.cart || [];
   const [form] = Form.useForm();
   const [toggle, setToggle] = useState(true);
@@ -38,6 +39,7 @@ const InformationCustomer = () => {
     );
     setDataCheckout(dataFilter);
   }, [checkoutCart]);
+console.log(dataCheckout);
 
   const removeUndefinedFields = (obj) => {
     /// lọc các trường undefined và ""
@@ -52,7 +54,6 @@ const InformationCustomer = () => {
     Object.fromEntries(
       Object.entries(obj).filter(([key]) => !fieldsToRemove.includes(key))
     );
-  console.log(dataCheckout);
 
   const onSubmit = () => {
     const user_id = getUserIdFromToken(); // Kiểm tra userId
@@ -93,7 +94,7 @@ const InformationCustomer = () => {
             createOrderByMomo({
               ...values,
               informationClient,
-              total_price: totalPrice,
+              total_price: totalPrice - discount,
             })
           )
             .unwrap()
@@ -132,7 +133,7 @@ const InformationCustomer = () => {
             createOrder({
               ...values,
               informationClient,
-              total_price: totalPrice,
+              total_price: totalPrice - discount ,
               orderId,
             })
           )
@@ -289,16 +290,16 @@ const InformationCustomer = () => {
               <h3 className="text-lg font-semibold mb-2">Thông tin đơn hàng</h3>
               <div className="flex justify-between pb-2 text-sm border-b border-gray-200">
                 <span>Tổng tiền</span>
-                <span>{totalPrice.toLocaleString()}</span>
+                <span>{totalPrice.toLocaleString()}đ</span>
               </div>
               <div className="flex justify-between mt-2 text-sm pb-2 border-b border-gray-20">
                 <span>Tổng khuyến mãi</span>
-                <span className="text-red-500">0 đ</span>
+                <span className="text-red-500">{discount > 0 ? discount.toLocaleString() : 0}đ</span>
               </div>
               <div className="flex justify-between mt-2 text-lg font-semibold">
                 <span>Cần thanh toán</span>
                 <span className="text-red-600">
-                  {totalPrice.toLocaleString()}
+                  {(totalPrice - discount ).toLocaleString()}
                 </span>
               </div>
               <button
