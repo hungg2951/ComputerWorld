@@ -10,12 +10,14 @@ import {
   createOrderByMomo,
 } from "../../../redux/slice/orderSlice";
 import { createOrderDetail } from "../../../redux/slice/orderDetailSlice";
+import { updateVoucher, useVoucher } from "../../../redux/slice/voucherSlice";
 
 const { Option } = Select;
 
 const InformationCustomer = () => {
   const location = useLocation();
   const totalPrice = location.state?.totalPrice || 0;
+  const code = location.state?.code || "";
   const discount = location.state?.discount || 0;
   const checkoutCart = location.state?.cart || [];
   const [form] = Form.useForm();
@@ -39,7 +41,6 @@ const InformationCustomer = () => {
     );
     setDataCheckout(dataFilter);
   }, [checkoutCart]);
-console.log(dataCheckout);
 
   const removeUndefinedFields = (obj) => {
     /// lọc các trường undefined và ""
@@ -57,10 +58,10 @@ console.log(dataCheckout);
 
   const onSubmit = () => {
     const user_id = getUserIdFromToken(); // Kiểm tra userId
-
+    let checkVoucher = false;
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
         if (user_id && user_id !== undefined) {
           values = { ...values, user_id };
         }
@@ -88,6 +89,22 @@ console.log(dataCheckout);
         if (!toggle) {
           delete informationClient.address;
         }
+        if (code !== "") {
+          await dispatch(useVoucher({ code, userId: user_id }))
+            .unwrap()
+            .then(() => {
+              checkVoucher = true;
+            })
+            .catch((e) => {
+              checkVoucher = false;
+              Swal.fire({
+                icon: "warning",
+                title: e.message,
+                showConfirmButton: true,
+              });
+            });
+        }
+        if (!checkVoucher) return;
         if (values.payment_method === "momo") {
           // thanh toán qua momo
           dispatch(
@@ -127,13 +144,13 @@ console.log(dataCheckout);
           return;
         }
         if (values.payment_method === "cash") {
-          var orderId = "ComputerWorld" + new Date().getTime();
           // thanh toán khi nhận hàng
+          var orderId = "ComputerWorld" + new Date().getTime();
           dispatch(
             createOrder({
               ...values,
               informationClient,
-              total_price: totalPrice - discount ,
+              total_price: totalPrice - discount,
               orderId,
             })
           )
@@ -294,12 +311,14 @@ console.log(dataCheckout);
               </div>
               <div className="flex justify-between mt-2 text-sm pb-2 border-b border-gray-20">
                 <span>Tổng khuyến mãi</span>
-                <span className="text-red-500">{discount > 0 ? discount.toLocaleString() : 0}đ</span>
+                <span className="text-red-500">
+                  {discount > 0 ? discount.toLocaleString() : 0}đ
+                </span>
               </div>
               <div className="flex justify-between mt-2 text-lg font-semibold">
                 <span>Cần thanh toán</span>
                 <span className="text-red-600">
-                  {(totalPrice - discount ).toLocaleString()}
+                  {(totalPrice - discount).toLocaleString()}
                 </span>
               </div>
               <button

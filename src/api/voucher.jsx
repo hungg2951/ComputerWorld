@@ -12,5 +12,8 @@ export const voucherAPI = {
     },
     apply(data){
         return instance.post("voucher/apply",data)
+    },
+    use(data){
+        return instance.post("voucher/use",data)
     }
 }

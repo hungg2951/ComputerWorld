@@ -4,7 +4,7 @@ import { FaGift } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { getItemLocalStorage } from "../../../ultis/getItemLocalStore";
 import Swal from "sweetalert2";
-import { Button, message } from "antd";
+import { Button } from "antd";
 import { checkToken, getUserIdFromToken } from "../../../ultis/isAuthenticated";
 import { useDispatch } from "react-redux";
 import { applyVoucher } from "../../../redux/slice/voucherSlice";
@@ -12,13 +12,15 @@ import { toast } from "react-toastify";
 
 const Cart = () => {
   const [discount, setDiscount] = useState(0);
+  const [code, setCode] = useState("");
   const navigation = useNavigate();
   const [dataCart, setDataCart] = useState([]);
   const [voucher, setVoucher] = useState("");
   const [messageVoucher, setMessageVoucher] = useState("");
-  const dispatch = useDispatch()
-  const addVoucher =()=>{
-    if(!voucher || voucher.trim() === "") return toast.warning("Vui lòng nhập mã giảm giá")
+  const dispatch = useDispatch();
+  const addVoucher = () => {
+    if (!voucher || voucher.trim() === "")
+      return toast.warning("Vui lòng nhập mã giảm giá");
     if (!checkToken()) {
       Swal.fire({
         title: "Thông báo",
@@ -28,21 +30,35 @@ const Cart = () => {
       });
       return;
     }
-    dispatch(applyVoucher({code:voucher,userId:getUserIdFromToken(),orderTotal:getTotalPrice()})).unwrap()
-    .then((res)=>{
-      setDiscount(res.discount)
-      setMessageVoucher("")
-      toast.success(res.message)
-    })
-    .catch((e)=>{
-      setDiscount(0)
-      setMessageVoucher(e.message)
-    })
-  }
+    dispatch(
+      applyVoucher({
+        code: voucher,
+        userId: getUserIdFromToken(),
+        orderTotal: getTotalPrice(),
+      })
+    )
+      .unwrap()
+      .then((res) => {
+        setDiscount(res.discount);
+        setMessageVoucher("");
+        setCode(res.code);
+        toast.success(res.message);
+      })
+      .catch((e) => {
+        setCode("");
+        setDiscount(0);
+        setMessageVoucher(e.message);
+      });
+  };
 
   const Payment = () => {
     navigation("/payment", {
-      state: { cart: dataCart, totalPrice: getTotalPrice(), discount },
+      state: {
+        cart: dataCart,
+        totalPrice: getTotalPrice(),
+        discount,
+        code,
+      },
     });
   };
   let cart = getItemLocalStorage("cart");
@@ -110,7 +126,9 @@ const Cart = () => {
       <div className="min-h-80 flex justify-center items-center text-xl">
         <div>
           <h1 className="font-bold">Giỏ hàng của bạn đang rỗng</h1>
-          <Button onClick={()=>navigation('/')} className="w-full">Tiếp tục mua sắm</Button>
+          <Button onClick={() => navigation("/")} className="w-full">
+            Tiếp tục mua sắm
+          </Button>
         </div>
       </div>
     );
@@ -147,9 +165,7 @@ const Cart = () => {
                       <span className="text-red-600 font-semibold text-lg">
                         {item.price.toLocaleString()}
                       </span>
-                      <span className="text-gray-400 line-through">
-                        
-                      </span>
+                      <span className="text-gray-400 line-through"></span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 border px-3 py-1 rounded-lg">
@@ -176,14 +192,17 @@ const Cart = () => {
                   className="w-3/4 text-sm p-2 border border-blue-600 rounded focus:outline-none focus:ring-0"
                   type="text"
                   placeholder="Nhập voucher khuyến mãi"
-                  onChange={(e)=> setVoucher(e.target.value)}
+                  onChange={(e) => setVoucher(e.target.value)}
                 />
-                
-                <button onClick={()=>addVoucher()} className="px-2 border text-sm border-blue-600 rounded hover:bg-blue-600 hover:text-white text-blue-600">
+
+                <button
+                  onClick={() => addVoucher()}
+                  className="px-2 border text-sm border-blue-600 rounded hover:bg-blue-600 hover:text-white text-blue-600"
+                >
                   Áp dụng
                 </button>
               </div>
-            <p className="text-red-600 text-sm">{messageVoucher}</p>
+              <p className="text-red-600 text-sm">{messageVoucher}</p>
             </div>
             <div className="mt-6 p-4 rounded-lg">
               <h3 className="text-lg font-semibold mb-2">Thông tin đơn hàng</h3>
@@ -199,7 +218,9 @@ const Cart = () => {
               </div>
               <div className="flex justify-between mt-2 text-lg font-semibold">
                 <span>Cần thanh toán</span>
-                <span className="text-red-600">{(getTotalPrice()-discount).toLocaleString()} đ</span>
+                <span className="text-red-600">
+                  {(getTotalPrice() - discount).toLocaleString()} đ
+                </span>
               </div>
               <button
                 onClick={() => Payment()}

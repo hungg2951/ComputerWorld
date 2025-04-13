@@ -38,16 +38,28 @@ export const createVoucher = createAsyncThunk(
 );
 
 export const updateVoucher = createAsyncThunk(
-    "vouchers/update",
-    async (values, { rejectWithValue }) => {
-      try {
-        const { data } = await voucherAPI.update(values);
-        return data;
-      } catch (error) {
-        return rejectWithValue(error.response.data);
-      }
+  "vouchers/update",
+  async (values, { rejectWithValue }) => {
+    try {
+      const { data } = await voucherAPI.update(values);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
-  );
+  }
+);
+
+export const useVoucher = createAsyncThunk(
+  "vouchers/use",
+  async (values, { rejectWithValue }) => {
+    try {
+      const { data } = await voucherAPI.use(values);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
   vouchers: [],
