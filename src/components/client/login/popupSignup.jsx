@@ -8,7 +8,9 @@ const PopupSignup = ({ visible, onClose, onLogin }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const onSubmit = (values) => {
+    setLoading(true)
     dispatch(authRegister(values))
       .unwrap()
       .then(() => {
@@ -21,7 +23,8 @@ const PopupSignup = ({ visible, onClose, onLogin }) => {
       .catch((error) => {
         console.log("Lỗi trả về:", error);
         setMessage("Email này đã có người đăng ký !");
-      });
+      })
+      .finally(() => setLoading(false));
   };
   return (
     <div>
@@ -64,7 +67,6 @@ const PopupSignup = ({ visible, onClose, onLogin }) => {
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
-                    
                   }
                   return Promise.reject(new Error("Mật khẩu không khớp!"));
                 },
@@ -79,6 +81,7 @@ const PopupSignup = ({ visible, onClose, onLogin }) => {
           </Form.Item>
 
           <Button
+            loading={loading}
             htmlType="submit"
             type="primary"
             className="w-full bg-red-500"

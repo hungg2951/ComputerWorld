@@ -8,9 +8,11 @@ const PopupSignin = ({ visible, onClose, onRegister }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   useEffect(() => {}, []);
 
   const onFinish = (values) => {
+    setLoading(true);
     dispatch(authLogin(values))
       .unwrap()
       .then(() => {
@@ -22,7 +24,8 @@ const PopupSignin = ({ visible, onClose, onRegister }) => {
       .catch((error) => {
         setMessage(error.message);
         console.log("Lỗi trả về:", error.message);
-      });
+      })
+      .finally(() => setLoading(false));
   };
   return (
     <div>
@@ -66,6 +69,7 @@ const PopupSignin = ({ visible, onClose, onRegister }) => {
           </div>
           <Form.Item>
             <Button
+              loading={loading}
               type="primary"
               htmlType="submit"
               className="bg-red-600 w-full py-2 text-white font-semibold"
@@ -93,7 +97,6 @@ const PopupSignin = ({ visible, onClose, onRegister }) => {
         <div className="text-center mt-4 text-sm">
           Bạn chưa có tài khoản?{" "}
           <a
-            href="#"
             className="text-blue-500 font-semibold"
             onClick={() => onRegister(true)}
           >
