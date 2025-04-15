@@ -141,12 +141,6 @@ const InformationCustomer = () => {
                         })
                       );
                     }
-                    Swal.fire({
-                      icon: "success",
-                      title: "Đặt hàng thành công!",
-                      showConfirmButton: false,
-                      timer: 1200,
-                    });
                     setTimeout(() => {
                       window.location.href = res.paymentUrl;
                       localStorage.removeItem("cart");
