@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Radio, Checkbox, Select } from "antd";
+import { Form, Input, Radio, Checkbox, Select, Button } from "antd";
 import ChooseAddress from "./chooseAddress";
 import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,8 @@ import {
 } from "../../../redux/slice/orderSlice";
 import { createOrderDetail } from "../../../redux/slice/orderDetailSlice";
 import { updateVoucher, useVoucher } from "../../../redux/slice/voucherSlice";
+import { sendmailOrder } from "./../../../redux/slice/sendmailSlice";
+import { contentEmail, subject } from "../../../ultis/contentSendmailOrder";
 
 const { Option } = Select;
 
@@ -22,6 +24,7 @@ const InformationCustomer = () => {
   const checkoutCart = location.state?.cart || [];
   const [form] = Form.useForm();
   const [toggle, setToggle] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState();
   const [dataCheckout, setDataCheckout] = useState();
   const [messageAddress, setmessageAddress] = useState("");
@@ -57,8 +60,9 @@ const InformationCustomer = () => {
     );
 
   const onSubmit = () => {
+    setLoading(true);
     const user_id = getUserIdFromToken(); // Kiểm tra userId
-    let checkVoucher = false;
+    let checkVoucher = true;
     form
       .validateFields()
       .then(async (values) => {
@@ -67,14 +71,18 @@ const InformationCustomer = () => {
         }
         values = removeUndefinedFields(values);
         if (toggle) {
-          if (address === undefined || values.address === undefined)
-            return setmessageAddress("Vui lòng chọn địa chỉ !");
+          if (address === undefined || values.address === undefined) {
+            setLoading(false);
+            setmessageAddress("Vui lòng chọn địa chỉ !");
+            return;
+          }
           if (values.payment_method !== "momo") {
             Swal.fire({
               icon: "warning",
               title: "Vui lòng chọn đúng phương thức thanh toán!",
               confirmButtonText: "OK",
             });
+            setLoading(false);
             return;
           }
         }
@@ -96,6 +104,7 @@ const InformationCustomer = () => {
               checkVoucher = true;
             })
             .catch((e) => {
+              setLoading(false);
               checkVoucher = false;
               Swal.fire({
                 icon: "warning",
@@ -122,6 +131,16 @@ const InformationCustomer = () => {
                 )
                   .unwrap()
                   .then(() => {
+                    if (values.email !== "" && values.email) {
+                      // kiêm tra gửi email mã đơn hàng
+                      dispatch(
+                        sendmailOrder({
+                          email: values.email,
+                          subject: subject,
+                          html: contentEmail(res.orderId),
+                        })
+                      );
+                    }
                     Swal.fire({
                       icon: "success",
                       title: "Đặt hàng thành công!",
@@ -135,7 +154,8 @@ const InformationCustomer = () => {
                   })
                   .catch((e) => {
                     console.log(e);
-                  });
+                  })
+                  .finally(() => setLoading(false));
               });
             })
             .catch((e) => {
@@ -162,6 +182,18 @@ const InformationCustomer = () => {
                 )
                   .unwrap()
                   .then(() => {
+                    if (values.email !== "" && values.email) {
+                      // kiêm tra gửi email mã đơn hàng
+                      dispatch(
+                        sendmailOrder({
+                          email: values.email,
+                          subject: subject,
+                          html: contentEmail(res.order.orderId),
+                        })
+                      )
+                        .unwrap()
+                        .catch((e) => console.log(e));
+                    }
                     Swal.fire({
                       icon: "success",
                       title: "Đặt hàng thành công!",
@@ -175,7 +207,8 @@ const InformationCustomer = () => {
                   })
                   .catch((e) => {
                     console.log(e);
-                  });
+                  })
+                  .finally(() => setLoading(false));
               });
             })
             .catch((e) => {
@@ -187,6 +220,7 @@ const InformationCustomer = () => {
       })
       .catch((e) => {
         console.log(e);
+        setLoading(false);
       });
   };
   useEffect(() => {
@@ -321,12 +355,13 @@ const InformationCustomer = () => {
                   {(totalPrice - discount).toLocaleString()}
                 </span>
               </div>
-              <button
+              <Button
+                loading={loading}
                 onClick={() => onSubmit()}
                 className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg font-semibold"
               >
                 Đặt hàng
-              </button>
+              </Button>
             </div>
           </div>
         </div>
